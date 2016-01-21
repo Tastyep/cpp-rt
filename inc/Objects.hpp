@@ -2,6 +2,15 @@
 #define RT_OBJECTS_HPP
 
 #include <sstream>
+#include <map>
+#include <functional>
+
+struct position {
+  double x;
+  double y;
+  
+  position(double x = 0, double y = 0) : x(x), y(y) {}
+};
 
 class Objects {
 public:
