@@ -1,11 +1,9 @@
 #ifndef RT_SPHERE_HH
 #define RT_SPHERE_HH
 
-#include "Objects.hpp"
+#include "SceneObj.hh"
 
-#include <vector>
-
-class Sphere : public Objects {
+class Sphere : public SceneObj {
 public:
   Sphere();
 
@@ -19,11 +17,6 @@ public:
   bool parseArgs(std::stringstream &ss);
 
 private:
-    bool parseArg(const std::vector<std::string>& tokens);
-
-private:
-  std::map<std::string, std::reference_wrapper<unsigned int>> IntegerValues;
-  std::map<std::string, std::reference_wrapper<double>> FloatingValues;
   unsigned int radius = 0;
   unsigned int color = 0;
   position pos;

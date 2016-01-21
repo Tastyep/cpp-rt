@@ -2,8 +2,6 @@
 #define RT_OBJECTS_HPP
 
 #include <sstream>
-#include <map>
-#include <functional>
 
 struct position {
   double x;
