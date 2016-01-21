@@ -14,7 +14,7 @@ bool Parser::parse(const std::string &fileName) {
 
   file.open(fileName);
   if (file.is_open()) {
-    this->readFile(file);
+    ret = this->readFile(file);
     file.close();
   } else
     std::cerr << "Could not open the file named \"" << fileName << "\""
@@ -51,6 +51,7 @@ bool Parser::readFile(std::ifstream &file) {
       obj = _objects.back();
     }
   }
+  return true;
 }
 
 const std::vector<std::shared_ptr<Objects>> &Parser::getObjects() const {
