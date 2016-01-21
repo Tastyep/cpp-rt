@@ -12,6 +12,6 @@ int main(int argc, char *argv[]) {
   }
   if (!valid_data)
     return 0;
-  window.run();
+  window.run(parser);
   return 0;
 }
