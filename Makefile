@@ -13,6 +13,7 @@ OBJDIR	= obj/
 SRCS	= main.cpp \
 				Parser.cpp \
 				SceneObj.cpp \
+				Camera.cpp \
 				Sphere.cpp \
 				Window.cpp
 

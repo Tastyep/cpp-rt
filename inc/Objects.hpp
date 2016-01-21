@@ -6,8 +6,9 @@
 struct position {
   double x;
   double y;
-  
-  position(double x = 0, double y = 0) : x(x), y(y) {}
+  double z;
+
+  position(double x = 0, double y = 0, double z = 0) : x(x), y(y), z(z) {}
 };
 
 class Objects {

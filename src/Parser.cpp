@@ -4,8 +4,9 @@
 #include <iostream>
 #include <sstream>
 
-Parser::Parser() {
+Parser::Parser() : _validScene(false)    {
   _shapes.emplace("Sphere", [this]() { _objects.emplace_back(new Sphere()); });
+  _shapes.emplace("Camera", [this]() { _validScene = true; });
 }
 
 bool Parser::parse(const std::string &fileName) {
@@ -56,4 +57,8 @@ bool Parser::readFile(std::ifstream &file) {
 
 const std::vector<std::shared_ptr<Objects>> &Parser::getObjects() const {
   return _objects;
+}
+
+const Camera& Parser::getCamera() const {
+    return _camera;
 }

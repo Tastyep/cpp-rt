@@ -9,6 +9,7 @@ bool SceneObj::parseArg(const std::vector<std::string>& tokens) {
     
     if (it1 == IntegerValues.end() && it2 == FloatingValues.end()) {
         std::cerr << "Unknown keyword \"" << tokens[0] << "\"" << std::endl;
+        return false;
     }
     if (it1 == IntegerValues.end()) {
         try {
@@ -29,4 +30,16 @@ bool SceneObj::parseArg(const std::vector<std::string>& tokens) {
         }        
     }
     return true;
+}
+
+bool SceneObj::parseArgs(std::stringstream &ss) {
+    std::vector<std::string> tokens;
+    std::string token;
+    
+    while (ss >> std::dec >> token) {
+        tokens.push_back(token);
+    }
+    if (tokens.size() != 3)
+        return true;
+    return this->parseArg(tokens);
 }

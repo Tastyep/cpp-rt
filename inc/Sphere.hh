@@ -14,12 +14,10 @@ public:
   Sphere &operator=(Sphere &&other) = default;
 
   bool intersect() const;
-  bool parseArgs(std::stringstream &ss);
 
 private:
   unsigned int radius = 0;
   unsigned int color = 0;
-  position pos;
 };
 
 #endif /* end of include guard: RT_SPHERE_HH */
