@@ -2,7 +2,6 @@
 #include "Sphere.hh"
 
 #include <iostream>
-#include <sstream>
 
 Parser::Parser() : _validScene(false)    {
   _shapes.emplace("Sphere", [this]() { _objects.emplace_back(new Sphere()); });
@@ -27,7 +26,7 @@ bool Parser::readFile(std::ifstream &file) {
   std::string line;
   std::string keyword;
   std::size_t pos;
-  std::shared_ptr<Objects> obj = nullptr;
+  std::shared_ptr<SceneObj> obj = nullptr;
 
   while (std::getline(file, line)) {
     std::stringstream ss(line);
@@ -55,7 +54,7 @@ bool Parser::readFile(std::ifstream &file) {
   return true;
 }
 
-const std::vector<std::shared_ptr<Objects>> &Parser::getObjects() const {
+const std::vector<std::shared_ptr<SceneObj>> &Parser::getObjects() const {
   return _objects;
 }
 

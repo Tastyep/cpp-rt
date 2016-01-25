@@ -1,7 +1,7 @@
 #ifndef RT_PARSER_HH
 #define RT_PARSER_HH
 
-#include "Objects.hpp"
+#include "SceneObj.hh"
 #include "Camera.hh"
 
 #include <string>
@@ -23,7 +23,7 @@ public:
 
 public:
   bool parse(const std::string &fileName);
-  const std::vector<std::shared_ptr<Objects>> &getObjects() const;
+  const std::vector<std::shared_ptr<SceneObj>> &getObjects() const;
   const Camera& getCamera() const;
 
 private:
@@ -31,7 +31,7 @@ private:
 
 private:
   bool _validScene;
-  std::vector<std::shared_ptr<Objects>> _objects;
+  std::vector<std::shared_ptr<SceneObj>> _objects;
   Camera _camera;
   std::map<std::string, std::function<void()>> _shapes;
 };

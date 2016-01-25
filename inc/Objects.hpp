@@ -2,21 +2,15 @@
 #define RT_OBJECTS_HPP
 
 #include <sstream>
+#include <array>
 
-struct position {
-  double x;
-  double y;
-  double z;
-
-  position(double x = 0, double y = 0, double z = 0) : x(x), y(y), z(z) {}
-};
+#include "Camera.hh"
 
 class Objects {
 public:
   Objects() = default;
 
-  virtual bool intersect() const = 0;
-  virtual bool parseArgs(std::stringstream &ss) = 0;
+  virtual double intersect(const std::array<double, 3>& rayVec, const Camera& camera) const = 0;
 };
 
 #endif /* end of include guard: RT_OBJECTS_HPP */

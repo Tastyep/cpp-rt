@@ -12,15 +12,16 @@ OBJDIR	= obj/
 
 SRCS	= main.cpp \
 				Parser.cpp \
+				Parsable.cpp \
+				Rt.cpp \
 				SceneObj.cpp \
 				Camera.cpp \
 				Sphere.cpp \
-				Window.cpp \
-				Rt.cpp
+				Window.cpp
 
 OBJS	= $(addprefix $(OBJDIR), $(SRCS:.cpp=.o))
 
-CXXFLAGS	= -O2 -march=native -std=c++1y
+CXXFLAGS	= -O2 -march=native -std=c++14
 
 INCOMP = -I $(INCDIR)
 

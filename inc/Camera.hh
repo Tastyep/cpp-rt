@@ -1,9 +1,9 @@
 #ifndef RT_CAMERA_HH
 #define RT_CAMERA_HH
 
-#include "SceneObj.hh"
+#include "Parsable.hh"
 
-class Camera : public SceneObj
+class Camera : public Parsable
 {
 public:
     Camera();
@@ -14,7 +14,10 @@ public:
     Camera& operator=(const Camera& other) = default;
     Camera& operator=(Camera&& other) = default;
     
-    bool intersect() const {};
+    const Position& getPosition() const;
+
+private:
+    Position pos;
 };
 
 #endif /* end of include guard: RT_CAMERA_HH */

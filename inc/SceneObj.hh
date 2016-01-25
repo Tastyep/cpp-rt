@@ -2,26 +2,24 @@
 #define RT_SCENE_OBJ
 
 #include "Objects.hpp"
+#include "Parsable.hh"
 
 #include <map>
-#include <functional>
-#include <vector>
+#include <array>
 
-class SceneObj : public Objects
+class SceneObj : public Objects, public Parsable
 {
 public:
     SceneObj() = default;
 
-    virtual bool intersect() const = 0;
-    virtual bool parseArgs(std::stringstream &ss);
+    virtual double intersect(const std::array<double, 3>& rayVec, const Camera& camera) const = 0;
+    
+    const Position& getPosition() const;
+    unsigned int getColor() const;
 
 protected:
-    bool parseArg(const std::vector<std::string>& tokens);
-
-protected:
-  std::map<std::string, std::reference_wrapper<unsigned int>> IntegerValues;
-  std::map<std::string, std::reference_wrapper<double>> FloatingValues;
-  position pos;
+  Position pos;
+  unsigned int color = 0;
 };
 
 #endif /* end of include guard: RT_SCENE_OBJ */

@@ -13,11 +13,10 @@ public:
   Sphere &operator=(const Sphere &other) = default;
   Sphere &operator=(Sphere &&other) = default;
 
-  bool intersect() const;
+  double intersect(const std::array<double, 3>& rayVec, const Camera& camera) const;
 
 private:
   unsigned int radius = 0;
-  unsigned int color = 0;
 };
 
 #endif /* end of include guard: RT_SPHERE_HH */
