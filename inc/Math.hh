@@ -7,6 +7,8 @@
 class Math
 {
 public:
+    static double constexpr eps = 0.000001;
+public:
     Math() = default;
 
     ~Math() = default;

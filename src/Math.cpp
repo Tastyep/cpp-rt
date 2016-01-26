@@ -5,8 +5,10 @@ double Math::getPositiveMin(const auto &array) const {
   double smallest;
 
   for (const auto &elem : array) {
-    if (elem > 0 && (set == false || elem < smallest))
+    if (elem > 0 && (set == false || elem < smallest)) {
+      set = true;
       smallest = elem;
+    }
   }
   return smallest;
 }
@@ -16,7 +18,7 @@ double Math::solveSecond(const std::array<double, 3> &coefs,
   double delta;
   double sqrtDelta;
 
-  if (coefs[0] == 0)
+  if (coefs[0] <= Math::eps && coefs[0] >= Math::eps)
     return -1;
   delta = coefs[1] * coefs[1] - (4.0 * coefs[0] * coefs[2]);
   if (delta < 0)

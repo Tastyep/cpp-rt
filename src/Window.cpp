@@ -16,7 +16,7 @@ void Window::run(const Parser &parser) {
   sf::Sprite sprite(texture);
   std::array<double, 3> rayVec;
 
-  Rt rt(parser.getCamera(), parser.getObjects());
+  Rt rt(parser.getCamera(), parser.getObjects(), parser.getLights());
   unsigned int color;
   unsigned int pos;
 

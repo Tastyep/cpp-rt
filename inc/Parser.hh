@@ -3,6 +3,7 @@
 
 #include "SceneObj.hh"
 #include "Camera.hh"
+#include "Light.hh"
 
 #include <string>
 #include <fstream>
@@ -31,6 +32,7 @@ public:
 public:
   bool parse(const std::string &fileName);
   const std::vector<std::shared_ptr<SceneObj>> &getObjects() const;
+  const std::vector<std::shared_ptr<Light>> &getLights() const;
   const Camera& getCamera() const;
 
 private:
@@ -39,6 +41,7 @@ private:
 private:
   bool _validScene;
   std::vector<std::shared_ptr<SceneObj>> _objects;
+  std::vector<std::shared_ptr<Light>> _lights;
   Camera _camera;
   std::map<std::string, ParsableWrapper> _elements;
   std::map<std::string, std::function<void()>> _shapes;

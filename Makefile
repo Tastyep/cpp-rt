@@ -18,11 +18,13 @@ SRCS	= main.cpp \
 				Camera.cpp \
 				Sphere.cpp \
 				Window.cpp \
-				Math.cpp
+				Math.cpp \
+				Light.cpp \
+				LightModel.cpp
 
 OBJS	= $(addprefix $(OBJDIR), $(SRCS:.cpp=.o))
 
-CXXFLAGS	= -O2 -march=native -std=c++14
+CXXFLAGS	= -O2 -march=native -std=c++14 -g
 
 INCOMP = -I $(INCDIR)
 

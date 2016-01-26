@@ -3,14 +3,17 @@
 
 #include "Camera.hh"
 #include "SceneObj.hh"
+#include "LightModel.hh"
 
 #include <memory>
+#include <utility>
 #include <SFML/System.hpp>
 
 class Rt {
 public:
   Rt(const Camera &camera,
-     const std::vector<std::shared_ptr<SceneObj>> &objects);
+     const std::vector<std::shared_ptr<SceneObj>> &objects,
+     const std::vector<std::shared_ptr<Light>> &lights);
 
   ~Rt() = default;
   Rt(const Rt &other) = default;
@@ -22,7 +25,7 @@ public:
   void computeRayVec(std::array<double, 3>& rayVec, int x, int y, sf::Vector2i screenSize) const;
 
 private:
-  std::shared_ptr<SceneObj> getClosestObj(const auto& rayVec);
+  std::pair<std::shared_ptr<SceneObj>, double> getClosestObj(const auto& rayVec);
 
 private:
   static constexpr unsigned int Dist = 1000;
@@ -30,6 +33,7 @@ private:
 private:
   const Camera &camera;
   const std::vector<std::shared_ptr<SceneObj>> &objects;
+  LightModel lightModel;
 };
 
 #endif /* end of include guard: RT_RT_HH */

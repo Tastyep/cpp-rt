@@ -4,7 +4,8 @@
 #include <iostream>
 
 Parser::Parser() : _validScene(false) {
-  _shapes.emplace("Sphere", [this]() { _objects.emplace_back(new Sphere()); });
+    _shapes.emplace("Sphere", [this]() { _objects.emplace_back(new Sphere()); });
+    _shapes.emplace("Light", [this]() { _lights.emplace_back(new Light()); });
 
   _elements.emplace("Camera", ParsableWrapper(_camera, [this]() { _validScene = true; }));
 }
@@ -65,6 +66,10 @@ bool Parser::readFile(std::ifstream &file) {
 
 const std::vector<std::shared_ptr<SceneObj>> &Parser::getObjects() const {
   return _objects;
+}
+
+const std::vector<std::shared_ptr<Light>> &Parser::getLights() const {
+  return _lights;
 }
 
 const Camera &Parser::getCamera() const { return _camera; }
