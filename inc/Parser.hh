@@ -11,6 +11,13 @@
 #include <functional>
 #include <memory>
 
+struct ParsableWrapper {
+    Parsable& obj;
+    std::function<void ()> callback;
+
+    ParsableWrapper(Parsable& p, const std::function<void ()>& callback) : obj(p), callback(callback) {}
+};
+
 class Parser {
 public:
   Parser();
@@ -33,6 +40,7 @@ private:
   bool _validScene;
   std::vector<std::shared_ptr<SceneObj>> _objects;
   Camera _camera;
+  std::map<std::string, ParsableWrapper> _elements;
   std::map<std::string, std::function<void()>> _shapes;
 };
 

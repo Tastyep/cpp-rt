@@ -17,7 +17,8 @@ SRCS	= main.cpp \
 				SceneObj.cpp \
 				Camera.cpp \
 				Sphere.cpp \
-				Window.cpp
+				Window.cpp \
+				Math.cpp
 
 OBJS	= $(addprefix $(OBJDIR), $(SRCS:.cpp=.o))
 

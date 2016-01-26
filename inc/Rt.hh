@@ -19,7 +19,7 @@ public:
   Rt &operator=(Rt &&other) = default;
 
   unsigned int computePixelColor(const std::array<double, 3>& rayVec);
-  void computeRayVec(std::array<double, 3>& rayVec, unsigned int x, unsigned int y, sf::Vector2u& screenSize) const;
+  void computeRayVec(std::array<double, 3>& rayVec, int x, int y, sf::Vector2i screenSize) const;
 
 private:
   std::shared_ptr<SceneObj> getClosestObj(const auto& rayVec);

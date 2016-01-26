@@ -29,7 +29,7 @@ void Window::run(const Parser &parser) {
     }
     for (unsigned int y = 0; y < size.y; ++y) {
       for (unsigned int x = 0; x < size.x; ++x) {
-        rt.computeRayVec(rayVec, x, y, size);
+        rt.computeRayVec(rayVec, x, y, static_cast<sf::Vector2i>(size));
         color = rt.computePixelColor(rayVec);
         pixels[4 * pos] = (color >> 16) & 0xFF;
         pixels[4 * pos + 1] = (color >> 8) & 0xFF;

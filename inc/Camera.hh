@@ -14,9 +14,6 @@ public:
     Camera& operator=(const Camera& other) = default;
     Camera& operator=(Camera&& other) = default;
     
-    const Position& getPosition() const;
-
-private:
     Position pos;
 };
 
