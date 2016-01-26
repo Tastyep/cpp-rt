@@ -22,7 +22,10 @@ bool Parsable::parseArg(const std::vector<std::string>& tokens) {
     }
     else {
         try {
-            it1->second.get() = std::stoi(tokens[2]);
+            if (tokens[2].find("0x") != std::string::npos)
+                it1->second.get() = std::stoi(tokens[2], 0, 16);
+            else
+                it1->second.get() = std::stoi(tokens[2]);
         }
         catch (const std::exception& e) {
             std::cerr << e.what() << std::endl;
