@@ -1,6 +1,8 @@
 #include "LightModel.hh"
+#include "Math.hh"
 
 #include <cmath>
+#include <iostream>
 
 LightModel::LightModel(const std::vector<std::shared_ptr<Light>> &lights)
     : lights(lights) {}
@@ -34,22 +36,42 @@ double LightModel::getDistanceAndNormal(Vector &normal,
 
 unsigned int LightModel::applyLights(std::shared_ptr<SceneObj> obj, double k,
                                      const Camera &camera,
-                                     const Vector &rayVec) {
+                                     Vector rayVec) {
   Vector normVec;
   Vector lightVec;
+  Vector phongComp;
   Position impact;
+  LightParameters objLight = obj->getLightParameters();
+  unsigned int color = obj->getColor();
+  unsigned int specularColor = 0xFFFFFF;
+  double cosTheta;
+  double cosOmega;
+  Math math;
   
   impact.x = camera.pos.x + k * rayVec.x;
   impact.y = camera.pos.y + k * rayVec.y;
   impact.z = camera.pos.z + k * rayVec.z;
 
   this->getDistanceAndNormal(normVec, camera, obj, rayVec, k);
+  rayVec.makeUnit();
+  normVec.makeUnit();
   for (const auto& light: this->lights) {
       const auto& lightPos = light->getPosition();
-      
-      lightVec.x = impact.x - lightPos.x;
-      lightVec.y = impact.y - lightPos.y;
-      lightVec.z = impact.z - lightPos.z;
+      Vector reflected;
+  
+      lightVec.x = lightPos.x - impact.x;
+      lightVec.y = lightPos.y - impact.y;
+      lightVec.z = lightPos.z - impact.z;
+      lightVec.makeUnit();
+      cosTheta = std::max(lightVec.dot(normVec), 0.0);
+      reflected = 2.0 * cosTheta * normVec - lightVec;
+      cosOmega = std::max(reflected.dot(-rayVec), 0.0);
+      phongComp.x = objLight.Ia * 0;
+      phongComp.y = 1.0 * objLight.Id * cosTheta;// change 1.0 by the intensity of the light
+      phongComp.z = 1.0 * objLight.Is * std::pow(cosOmega, 30);
+      color = math.multiplyColor(color, phongComp.y);
+      specularColor = math.multiplyColor(specularColor, phongComp.z);
+      color = math.addColor(color, specularColor);
   }
-  return obj->getColor();
+  return color;
 }

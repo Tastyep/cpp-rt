@@ -15,6 +15,10 @@ const Position& SceneObj::getPosition() const {
     return pos;
 }
 
+const LightParameters& SceneObj::getLightParameters() const {
+    return light;
+}
+
 unsigned int SceneObj::getColor() const {
     return color;
 }

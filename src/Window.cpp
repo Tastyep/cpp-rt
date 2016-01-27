@@ -3,6 +3,8 @@
 
 #include <cstdint>
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 Window::Window(unsigned int width, unsigned int height)
     : _window(sf::VideoMode(width, height), "Noise Renderer") {}
@@ -41,5 +43,6 @@ void Window::run(const Parser &parser) {
     texture.update(pixels);
     _window.draw(sprite);
     _window.display();
+    std::this_thread::sleep_for(std::chrono::seconds(1));
   }
 }

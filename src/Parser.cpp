@@ -4,10 +4,11 @@
 #include <iostream>
 
 Parser::Parser() : _validScene(false) {
-    _shapes.emplace("Sphere", [this]() { _objects.emplace_back(new Sphere()); });
-    _shapes.emplace("Light", [this]() { _lights.emplace_back(new Light()); });
+  _shapes.emplace("Sphere", [this]() { _objects.emplace_back(new Sphere()); });
+  _shapes.emplace("Light", [this]() { _lights.emplace_back(new Light()); });
 
-  _elements.emplace("Camera", ParsableWrapper(_camera, [this]() { _validScene = true; }));
+  _elements.emplace("Camera",
+                    ParsableWrapper(_camera, [this]() { _validScene = true; }));
 }
 
 bool Parser::parse(const std::string &fileName) {
@@ -28,7 +29,7 @@ bool Parser::readFile(std::ifstream &file) {
   std::string line;
   std::string keyword;
   std::size_t pos;
-  Parsable* obj = nullptr;
+  Parsable *obj = nullptr;
 
   while (std::getline(file, line)) {
     std::stringstream ss(line);
@@ -51,14 +52,16 @@ bool Parser::readFile(std::ifstream &file) {
           continue;
         else
           obj->parseArgs(ss);
-      }
-      else {
-          it2->second.callback();
-          obj = std::addressof(it2->second.obj);
+      } else {
+        it2->second.callback();
+        obj = std::addressof(it2->second.obj);
       }
     } else {
       it->second();
-      obj = _objects.back().get();
+      if (keyword.compare("Light") == 0)
+        obj = _lights.back().get();
+      else
+        obj = _objects.back().get();
     }
   }
   return true;

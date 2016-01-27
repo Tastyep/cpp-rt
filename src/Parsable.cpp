@@ -40,7 +40,6 @@ bool Parsable::parseArgs(std::stringstream &ss) {
     std::string token;
     
     while (ss >> std::dec >> token) {
-        std::cout << "tokens: " << token << "\n";
         tokens.push_back(token);
     }
     if (tokens.size() != 3)

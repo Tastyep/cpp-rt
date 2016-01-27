@@ -23,6 +23,7 @@ public:
     virtual void calcNormal(Vector& normVec, const Position& impact) const = 0;
     
     const Position& getPosition() const;
+    const LightParameters& getLightParameters() const;
     unsigned int getColor() const;
 
     void applyTransformations(Camera& camera, Vector& rayVec) const;

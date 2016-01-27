@@ -21,7 +21,7 @@ public:
 
   unsigned int applyLights(std::shared_ptr<SceneObj> obj, double k,
                            const Camera &camera,
-                           const Vector &rayVec);
+                           Vector rayVec);
 
 private:
   double getDistanceAndNormal(Vector &normal, Camera camera,

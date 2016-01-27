@@ -31,12 +31,12 @@ Rt::getClosestObj(const auto &rayVec) {
   return {savedObj, kmin};
 }
 
-unsigned int Rt::computePixelColor(const Vector& rayVec) {
-    unsigned int color;
+unsigned int Rt::computePixelColor(const Vector &rayVec) {
+  unsigned int color;
   auto pair = this->getClosestObj(rayVec);
 
   if (pair.first == nullptr)
-    return 0xFFFFFF;
+    return 0x000000;
   color = lightModel.applyLights(pair.first, pair.second, this->camera, rayVec);
   return color;
 }

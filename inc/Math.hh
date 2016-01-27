@@ -4,7 +4,6 @@
 #include "Utility.hpp"
 
 #include <array>
-#include <cmath>
 
 class Math
 {
@@ -20,7 +19,9 @@ public:
     Math& operator=(Math&& other) = default;
 
     double solveSecond(const Vector& coefs, std::array<double, 2> solutions) const;
-    double getVectorNorme(const Vector& vec);
+    unsigned int multiplyColor(unsigned int color, const Vector& vec) const;
+    unsigned int multiplyColor(unsigned int color, double value) const;
+    unsigned int addColor(unsigned int color, unsigned int color2) const;
 
 private:
     double getPositiveMin(const auto &array) const;
