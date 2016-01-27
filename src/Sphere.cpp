@@ -5,22 +5,28 @@
 
 Sphere::Sphere() {
   IntegerValues = {{"radius", radius}, {"color", color}};
-  FloatingValues = {{"x", pos.x}, {"y", pos.y}, {"z", pos.z}};
+  FloatingValues = {{"x", pos.x},     {"y", pos.y},     {"z", pos.z},
+                    {"Ia", light.Ia}, {"Id", light.Id}, {"Is", light.Is}};
 }
 
-double Sphere::intersect(std::array<double, 3> rayVec, Camera camera) const {
-  this->apply_transformations(camera, rayVec);
-  std::array<double, 3> coef;
+double Sphere::intersect(Vector rayVec, Camera camera) const {
+  this->applyTransformations(camera, rayVec);
+  Vector coef;
   std::array<double, 2> solutions;
   double solution;
   Math math;
 
-  coef[0] =
-      rayVec[0] * rayVec[0] + rayVec[1] * rayVec[1] + rayVec[2] * rayVec[2];
-  coef[1] = 2.0 * (camera.pos.x * rayVec[0] + camera.pos.y * rayVec[1] +
-                   camera.pos.z * rayVec[2]);
-  coef[2] = camera.pos.x * camera.pos.x + camera.pos.y * camera.pos.y +
-            camera.pos.z * camera.pos.z - this->radius * this->radius;
+  coef.x = rayVec.x * rayVec.x + rayVec.y * rayVec.y + rayVec.z * rayVec.z;
+  coef.y = 2.0 * (camera.pos.x * rayVec.x + camera.pos.y * rayVec.y +
+                  camera.pos.z * rayVec.z);
+  coef.z = camera.pos.x * camera.pos.x + camera.pos.y * camera.pos.y +
+           camera.pos.z * camera.pos.z - this->radius * this->radius;
   solution = math.solveSecond(coef, solutions);
   return solution;
+}
+
+void Sphere::calcNormal(Vector &normVec, const Position &impact) const {
+  normVec.x = impact.x;
+  normVec.y = impact.y;
+  normVec.z = impact.z;
 }

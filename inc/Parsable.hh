@@ -1,17 +1,11 @@
 #ifndef RT_PARSABLE_HH
 #define RT_PARSABLE_HH
 
+#include "Utility.hpp"
+
 #include <map>
 #include <functional>
 #include <vector>
-
-struct Position {
-  double x;
-  double y;
-  double z;
-
-  Position(double x = 0, double y = 0, double z = 0) : x(x), y(y), z(z) {}
-};
 
 class Parsable
 {

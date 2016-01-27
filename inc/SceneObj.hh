@@ -6,22 +6,30 @@
 
 #include <map>
 #include <array>
+#include <memory>
+
+struct LightParameters {
+    double Ia;
+    double Id;
+    double Is;
+};
 
 class SceneObj : public Objects, public Parsable
 {
 public:
     SceneObj() = default;
 
-    virtual double intersect(std::array<double, 3> rayVec, Camera camera) const = 0;
+    virtual double intersect(Vector rayVec, Camera camera) const = 0;
+    virtual void calcNormal(Vector& normVec, const Position& impact) const = 0;
     
     const Position& getPosition() const;
     unsigned int getColor() const;
 
-protected:
-    void apply_transformations(Camera& camera, std::array<double, 3>& rayVec) const;
+    void applyTransformations(Camera& camera, Vector& rayVec) const;
 
 protected:
   Position pos;
+  LightParameters light;
   unsigned int color = 0;
 };
 

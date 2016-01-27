@@ -7,11 +7,11 @@ Rt::Rt(const Camera &camera,
        const std::vector<std::shared_ptr<Light>> &lights)
     : camera(camera), objects(objects), lightModel(lights) {}
 
-void Rt::computeRayVec(std::array<double, 3> &rayVec, int x, int y,
+void Rt::computeRayVec(Vector &rayVec, int x, int y,
                        sf::Vector2i screenSize) const {
-  rayVec[0] = Rt::Dist - camera.pos.x;
-  rayVec[1] = (screenSize.x / 2 - x) - camera.pos.y;
-  rayVec[2] = (screenSize.y / 2 - y) - camera.pos.z;
+  rayVec.x = Rt::Dist - camera.pos.x;
+  rayVec.y = (screenSize.x / 2 - x) - camera.pos.y;
+  rayVec.z = (screenSize.y / 2 - y) - camera.pos.z;
   // Apply rotation
 }
 
@@ -31,12 +31,12 @@ Rt::getClosestObj(const auto &rayVec) {
   return {savedObj, kmin};
 }
 
-unsigned int Rt::computePixelColor(const std::array<double, 3> &rayVec) {
+unsigned int Rt::computePixelColor(const Vector& rayVec) {
     unsigned int color;
   auto pair = this->getClosestObj(rayVec);
 
   if (pair.first == nullptr)
     return 0xFFFFFF;
-  color = lightModel.applyLights(pair);
+  color = lightModel.applyLights(pair.first, pair.second, this->camera, rayVec);
   return color;
 }

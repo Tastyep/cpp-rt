@@ -13,20 +13,24 @@ double Math::getPositiveMin(const auto &array) const {
   return smallest;
 }
 
-double Math::solveSecond(const std::array<double, 3> &coefs,
+double Math::solveSecond(const Vector &coefs,
                          std::array<double, 2> solutions) const {
   double delta;
   double sqrtDelta;
 
-  if (coefs[0] <= Math::eps && coefs[0] >= Math::eps)
+  if (coefs.x <= Math::eps && coefs.x >= Math::eps)
     return -1;
-  delta = coefs[1] * coefs[1] - (4.0 * coefs[0] * coefs[2]);
+  delta = coefs.y * coefs.y - (4.0 * coefs.x * coefs.z);
   if (delta < 0)
     return -1;
   if (delta == 0)
-    return (-coefs[1] / (2.0 * coefs[0]));
+    return (-coefs.y / (2.0 * coefs.x));
   sqrtDelta = std::sqrt(delta);
-  solutions[0] = (-coefs[1] + sqrtDelta) / (2.0 * coefs[0]);
-  solutions[1] = (-coefs[1] - sqrtDelta) / (2.0 * coefs[0]);
+  solutions[0] = (-coefs.y + sqrtDelta) / (2.0 * coefs.x);
+  solutions[1] = (-coefs.y - sqrtDelta) / (2.0 * coefs.x);
   return getPositiveMin(solutions);
+}
+
+double Math::getVectorNorme(const Vector& vec) {
+    
 }

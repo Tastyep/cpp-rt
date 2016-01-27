@@ -13,7 +13,8 @@ public:
   Sphere &operator=(const Sphere &other) = default;
   Sphere &operator=(Sphere &&other) = default;
 
-  double intersect(std::array<double, 3> rayVec, Camera camera) const;
+  double intersect(Vector rayVec, Camera camera) const;
+  void calcNormal(Vector &normVec, const Position& impact) const;
 
 private:
   unsigned int radius = 0;

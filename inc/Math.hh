@@ -1,6 +1,8 @@
 #ifndef RT_MATH_HH
 #define RT_MATH_HH
 
+#include "Utility.hpp"
+
 #include <array>
 #include <cmath>
 
@@ -17,7 +19,8 @@ public:
     Math& operator=(const Math& other) = default;
     Math& operator=(Math&& other) = default;
 
-    double solveSecond(const std::array<double, 3>& coefs, std::array<double, 2> solutions) const;
+    double solveSecond(const Vector& coefs, std::array<double, 2> solutions) const;
+    double getVectorNorme(const Vector& vec);
 
 private:
     double getPositiveMin(const auto &array) const;

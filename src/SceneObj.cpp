@@ -3,7 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 
-void SceneObj::apply_transformations(Camera& camera, std::array<double, 3>& rayVec) const {
+void SceneObj::applyTransformations(Camera& camera, Vector& rayVec) const {
     camera.pos.x -= pos.x;
     camera.pos.y -= pos.y;
     camera.pos.z -= pos.z;
