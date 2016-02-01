@@ -39,7 +39,7 @@ unsigned int LightModel::applyLights(std::shared_ptr<SceneObj> obj, double k,
                                      Vector rayVec) {
   Vector normVec;
   Vector lightVec;
-  Vector phongComp;
+  Vector phongComp = {0,0,0};
   Position impact;
   LightParameters objLight = obj->getLightParameters();
   unsigned int color = obj->getColor();
@@ -58,6 +58,7 @@ unsigned int LightModel::applyLights(std::shared_ptr<SceneObj> obj, double k,
   for (const auto& light: this->lights) {
       const auto& lightPos = light->getPosition();
       Vector reflected;
+      Vector currentPhong;
   
       lightVec.x = lightPos.x - impact.x;
       lightVec.y = lightPos.y - impact.y;
@@ -66,12 +67,15 @@ unsigned int LightModel::applyLights(std::shared_ptr<SceneObj> obj, double k,
       cosTheta = std::max(lightVec.dot(normVec), 0.0);
       reflected = 2.0 * cosTheta * normVec - lightVec;
       cosOmega = std::max(reflected.dot(-rayVec), 0.0);
-      phongComp.x = objLight.Ia * 0;
-      phongComp.y = 1.0 * objLight.Id * cosTheta;// change 1.0 by the intensity of the light
-      phongComp.z = 1.0 * objLight.Is * std::pow(cosOmega, 30);
-      color = math.multiplyColor(color, phongComp.y);
-      specularColor = math.multiplyColor(specularColor, phongComp.z);
-      color = math.addColor(color, specularColor);
+      currentPhong.x = objLight.Ia * 0;
+      currentPhong.y = 1.0 * objLight.Id * cosTheta;// change 1.0 by the intensity of the light
+      currentPhong.z = 1.0 * objLight.Is * std::pow(cosOmega, 30);
+      phongComp.x = std::max(phongComp.x, currentPhong.x);
+      phongComp.y = std::max(phongComp.y, currentPhong.y);
+      phongComp.z = std::max(phongComp.z, currentPhong.z);
   }
+  color = math.multiplyColor(color, phongComp.y);
+  specularColor = math.multiplyColor(0xFFFFFF, phongComp.z);
+  color = math.addColor(color, specularColor);
   return color;
 }

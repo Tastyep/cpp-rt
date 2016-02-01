@@ -1,10 +1,13 @@
 #include "Parser.hh"
 #include "Sphere.hh"
+#include "Rectangle.hh"
 
 #include <iostream>
 
 Parser::Parser() : _validScene(false) {
   _shapes.emplace("Sphere", [this]() { _objects.emplace_back(new Sphere()); });
+  _shapes.emplace("Rectangle",
+                  [this]() { _objects.emplace_back(new Rectangle()); });
   _shapes.emplace("Light", [this]() { _lights.emplace_back(new Light()); });
 
   _elements.emplace("Camera",
