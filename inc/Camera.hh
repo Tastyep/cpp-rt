@@ -7,6 +7,7 @@ class Camera : public Parsable
 {
 public:
     Camera();
+    Camera(const Position& pos);
 
     ~Camera() = default;
     Camera(const Camera& other) = default;

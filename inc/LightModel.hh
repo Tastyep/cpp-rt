@@ -11,7 +11,8 @@
 
 class LightModel {
 public:
-  LightModel(const std::vector<std::shared_ptr<Light>> &lights);
+  LightModel(const std::vector<std::shared_ptr<Light>> &lights,
+             const std::vector<std::shared_ptr<SceneObj>> &objects);
 
   ~LightModel() = default;
   LightModel(const LightModel &other) = default;
@@ -20,17 +21,16 @@ public:
   LightModel &operator=(LightModel &&other) = default;
 
   unsigned int applyLights(std::shared_ptr<SceneObj> obj, double k,
-                           const Camera &camera,
-                           Vector rayVec);
+                           const Camera &camera, Vector rayVec);
 
 private:
   double getDistanceAndNormal(Vector &normal, Camera camera,
-                              std::shared_ptr<SceneObj> obj,
-                              Vector rayVec,
+                              std::shared_ptr<SceneObj> obj, Vector rayVec,
                               double k);
 
 private:
   const std::vector<std::shared_ptr<Light>> &lights;
+  const std::vector<std::shared_ptr<SceneObj>> &objects;
 };
 
 #endif /* end of include guard: RT_LIGHTMODEL_HH */

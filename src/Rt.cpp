@@ -5,7 +5,7 @@
 Rt::Rt(const Camera &camera,
        const std::vector<std::shared_ptr<SceneObj>> &objects,
        const std::vector<std::shared_ptr<Light>> &lights)
-    : camera(camera), objects(objects), lightModel(lights) {}
+    : camera(camera), objects(objects), lightModel(lights, objects) {}
 
 void Rt::computeRayVec(Vector &rayVec, int x, int y,
                        sf::Vector2i screenSize) const {

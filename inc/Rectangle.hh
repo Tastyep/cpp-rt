@@ -1,5 +1,5 @@
-#ifndef RT_RECTANGLE_HH
-#define RT_RECTANGLE_HH
+#ifndef RT_Rectangle_HH
+#define RT_Rectangle_HH
 
 #include "SceneObj.hh"
 
@@ -21,4 +21,4 @@ private:
     double width;
 };
 
-#endif /* end of include guard: RT_RECTANGLE_HH */
+#endif /* end of include guard: RT_Rectangle_HH */
