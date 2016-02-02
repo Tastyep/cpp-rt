@@ -46,17 +46,46 @@ double LightModel::checkInter(const Vector &lightVec, const Camera &camera) {
   return -1;
 }
 
+bool LightModel::sumPhongValues(std::shared_ptr<Light> light,
+                                const Position &impact, const Vector &normVec,
+                                const Vector &rayVec, Vector &phongComp,
+                                const LightParameters &objLight) {
+  const auto &lightPos = light->getPosition();
+  Camera newCam(lightPos);
+  Vector lightVec;
+  double lightK;
+  Vector reflected;
+  Vector currentPhong;
+  double cosTheta;
+  double cosOmega;
+
+  lightVec.x = lightPos.x - impact.x;
+  lightVec.y = lightPos.y - impact.y;
+  lightVec.z = lightPos.z - impact.z;
+  lightK = this->checkInter(lightVec, newCam);
+  if (lightK >= 0 && lightK < 0.999999)
+    return false;
+  lightVec.makeUnit();
+  cosTheta = std::max(lightVec.dot(normVec), 0.0);
+  reflected = 2.0 * cosTheta * normVec - lightVec;
+  cosOmega = std::max(reflected.dot(-rayVec), 0.0);
+  currentPhong.x = objLight.Ia * 0;
+  currentPhong.y =
+      1.0 * objLight.Id * cosTheta; // change 1.0 by the intensity of the light
+  currentPhong.z = 1.0 * objLight.Is * std::pow(cosOmega, 50);
+  phongComp.x = std::max(phongComp.x, currentPhong.x);
+  phongComp.y = std::max(phongComp.y, currentPhong.y);
+  phongComp.z = std::max(phongComp.z, currentPhong.z);
+  return true;
+}
+
 unsigned int LightModel::applyLights(std::shared_ptr<SceneObj> obj, double k,
                                      const Camera &camera, Vector rayVec) {
   Vector normVec;
-  Vector lightVec;
   Vector phongComp = {0, 0, 0};
   Position impact;
-  LightParameters objLight = obj->getLightParameters();
   Color color = obj->getColor();
   Color specularColor = 0xFFFFFF;
-  double cosTheta;
-  double cosOmega;
   Color sumLightColor(0);
   unsigned int nbAppliedColor = 0;
   Math math;
@@ -68,32 +97,12 @@ unsigned int LightModel::applyLights(std::shared_ptr<SceneObj> obj, double k,
   this->getDistanceAndNormal(normVec, camera, obj, rayVec, k);
   rayVec.makeUnit();
   normVec.makeUnit();
-  for (const auto &light : this->lights) {
-    const auto &lightPos = light->getPosition();
-    Camera newCam(lightPos);
-    double lightK;
-    Vector reflected;
-    Vector currentPhong;
-
-    lightVec.x = lightPos.x - impact.x;
-    lightVec.y = lightPos.y - impact.y;
-    lightVec.z = lightPos.z - impact.z;
-    lightK = this->checkInter(lightVec, newCam);
-    if (lightK >= 0 && lightK < 0.999999)
-      continue;
-    lightVec.makeUnit();
-    cosTheta = std::max(lightVec.dot(normVec), 0.0);
-    reflected = 2.0 * cosTheta * normVec - lightVec;
-    cosOmega = std::max(reflected.dot(-rayVec), 0.0);
-    currentPhong.x = objLight.Ia * 0;
-    currentPhong.y = 1.0 * objLight.Id *
-                     cosTheta; // change 1.0 by the intensity of the light
-    currentPhong.z = 1.0 * objLight.Is * std::pow(cosOmega, 50);
-    phongComp.x = std::max(phongComp.x, currentPhong.x);
-    phongComp.y = std::max(phongComp.y, currentPhong.y);
-    phongComp.z = std::max(phongComp.z, currentPhong.z);
-    sumLightColor += Color(light->getColor());
-    ++nbAppliedColor;
+  for (auto light : this->lights) {
+    if (this->sumPhongValues(light, impact, normVec, rayVec, phongComp,
+                             obj->getLightParameters())) {
+      ++nbAppliedColor;
+      sumLightColor += Color(light->getColor());
+    }
   }
   if (nbAppliedColor > 0)
     color.mix(sumLightColor / nbAppliedColor, 0.2);

@@ -29,6 +29,9 @@ private:
                               std::shared_ptr<SceneObj> obj, Vector rayVec,
                               double k);
   double checkInter(const Vector &lightVec, const Camera &camera);
+  bool sumPhongValues(std::shared_ptr<Light> light, const Position &impact,
+                      const Vector &normVec, const Vector &rayVec,
+                      Vector &phongComp, const LightParameters &objLight);
 
 private:
   const std::vector<std::shared_ptr<Light>> &lights;
