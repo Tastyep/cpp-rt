@@ -15,6 +15,7 @@ public:
     Light& operator=(Light&& other) = default;
 
     const Position& getPosition() const;
+    unsigned int getColor() const;
 
 protected:
   Position pos;

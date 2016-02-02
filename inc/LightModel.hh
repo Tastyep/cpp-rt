@@ -4,6 +4,7 @@
 #include "Light.hh"
 #include "SceneObj.hh"
 #include "Camera.hh"
+#include "Color.hh"
 
 #include <vector>
 #include <array>
@@ -27,6 +28,7 @@ private:
   double getDistanceAndNormal(Vector &normal, Camera camera,
                               std::shared_ptr<SceneObj> obj, Vector rayVec,
                               double k);
+  double checkInter(const Vector &lightVec, const Camera &camera);
 
 private:
   const std::vector<std::shared_ptr<Light>> &lights;

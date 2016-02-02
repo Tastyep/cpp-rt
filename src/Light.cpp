@@ -8,3 +8,7 @@ Light::Light() {
 const Position& Light::getPosition() const {
     return pos;
 }
+
+unsigned int Light::getColor() const {
+    return color;
+}

@@ -21,7 +21,8 @@ SRCS	= main.cpp \
 				Math.cpp \
 				Light.cpp \
 				LightModel.cpp \
-				Rectangle.cpp
+				Rectangle.cpp \
+				Color.cpp
 
 OBJS	= $(addprefix $(OBJDIR), $(SRCS:.cpp=.o))
 

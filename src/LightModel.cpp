@@ -1,5 +1,6 @@
 #include "LightModel.hh"
 #include "Math.hh"
+#include "Color.hh"
 
 #include <cmath>
 #include <iostream>
@@ -33,6 +34,18 @@ double LightModel::getDistanceAndNormal(Vector &normal, Camera camera,
   return distance;
 }
 
+double LightModel::checkInter(const Vector &lightVec, const Camera &camera) {
+  double lightK;
+
+  for (auto object : this->objects) {
+    lightK = object->intersect(-lightVec, camera);
+
+    if (lightK >= 0 && lightK < 0.999999)
+      return lightK;
+  }
+  return -1;
+}
+
 unsigned int LightModel::applyLights(std::shared_ptr<SceneObj> obj, double k,
                                      const Camera &camera, Vector rayVec) {
   Vector normVec;
@@ -40,10 +53,12 @@ unsigned int LightModel::applyLights(std::shared_ptr<SceneObj> obj, double k,
   Vector phongComp = {0, 0, 0};
   Position impact;
   LightParameters objLight = obj->getLightParameters();
-  unsigned int color = obj->getColor();
-  unsigned int specularColor = 0xFFFFFF;
+  Color color = obj->getColor();
+  Color specularColor = 0xFFFFFF;
   double cosTheta;
   double cosOmega;
+  Color sumLightColor(0);
+  unsigned int nbAppliedColor = 0;
   Math math;
 
   impact.x = camera.pos.x + k * rayVec.x;
@@ -56,20 +71,15 @@ unsigned int LightModel::applyLights(std::shared_ptr<SceneObj> obj, double k,
   for (const auto &light : this->lights) {
     const auto &lightPos = light->getPosition();
     Camera newCam(lightPos);
-    double newK = 0;
+    double lightK;
     Vector reflected;
     Vector currentPhong;
 
     lightVec.x = lightPos.x - impact.x;
     lightVec.y = lightPos.y - impact.y;
     lightVec.z = lightPos.z - impact.z;
-    for (auto object : this->objects) {
-      newK = object->intersect(-lightVec, newCam);
-
-      if (newK >= 0 && newK < 0.999999)
-        break;
-    }
-    if (newK >= 0 && newK < 0.999999)
+    lightK = this->checkInter(lightVec, newCam);
+    if (lightK >= 0 && lightK < 0.999999)
       continue;
     lightVec.makeUnit();
     cosTheta = std::max(lightVec.dot(normVec), 0.0);
@@ -78,13 +88,18 @@ unsigned int LightModel::applyLights(std::shared_ptr<SceneObj> obj, double k,
     currentPhong.x = objLight.Ia * 0;
     currentPhong.y = 1.0 * objLight.Id *
                      cosTheta; // change 1.0 by the intensity of the light
-    currentPhong.z = 1.0 * objLight.Is * std::pow(cosOmega, 40);
+    currentPhong.z = 1.0 * objLight.Is * std::pow(cosOmega, 50);
     phongComp.x = std::max(phongComp.x, currentPhong.x);
     phongComp.y = std::max(phongComp.y, currentPhong.y);
     phongComp.z = std::max(phongComp.z, currentPhong.z);
+    sumLightColor += Color(light->getColor());
+    ++nbAppliedColor;
   }
-  color = math.multiplyColor(color, phongComp.y);
-  specularColor = math.multiplyColor(0xFFFFFF, phongComp.z);
-  color = math.addColor(color, specularColor);
-  return color;
+  if (nbAppliedColor > 0)
+    color.mix(sumLightColor / nbAppliedColor, 0.2);
+  color *= phongComp.y;
+  specularColor *= phongComp.z;
+  color += specularColor;
+  color.limit();
+  return color.toInteger();
 }
