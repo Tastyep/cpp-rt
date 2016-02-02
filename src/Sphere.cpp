@@ -10,17 +10,18 @@ Sphere::Sphere() {
 }
 
 double Sphere::intersect(Vector rayVec, Camera camera) const {
-  this->applyTransformations(camera, rayVec);
+  Position vecPos = camera.pos;
+  this->applyTransformations(vecPos, rayVec);
   Vector coef;
   std::array<double, 2> solutions;
   double solution;
   Math math;
 
   coef.x = rayVec.x * rayVec.x + rayVec.y * rayVec.y + rayVec.z * rayVec.z;
-  coef.y = 2.0 * (camera.pos.x * rayVec.x + camera.pos.y * rayVec.y +
-                  camera.pos.z * rayVec.z);
-  coef.z = camera.pos.x * camera.pos.x + camera.pos.y * camera.pos.y +
-           camera.pos.z * camera.pos.z - this->radius * this->radius;
+  coef.y =
+      2.0 * (vecPos.x * rayVec.x + vecPos.y * rayVec.y + vecPos.z * rayVec.z);
+  coef.z = vecPos.x * vecPos.x + vecPos.y * vecPos.y + vecPos.z * vecPos.z -
+           this->radius * this->radius;
   solution = math.solveSecond(coef, solutions);
   return solution;
 }

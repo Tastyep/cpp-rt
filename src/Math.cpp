@@ -32,3 +32,25 @@ double Math::solveSecond(const Vector &coefs,
   solutions[1] = (-coefs.y - sqrtDelta) / (2.0 * coefs.x);
   return getPositiveMin(solutions);
 }
+
+Vector Math::calcReflectedVector(const Vector &ray,
+                                 const Vector &normal) const {
+  double cosAngle;
+
+  cosAngle = ray.dot(normal);
+  return (2.0 * cosAngle * normal - ray);
+}
+
+Vector Math::calcNormalVector(Position pos, std::shared_ptr<SceneObj> obj,
+                              Vector rayVec, double k) const {
+  Position impact;
+  const Position &objPos = obj->getPosition();
+  Vector normal;
+
+  obj->applyTransformations(pos, rayVec);
+  impact.x = pos.x + k * rayVec.x;
+  impact.y = pos.y + k * rayVec.y;
+  impact.z = pos.z + k * rayVec.z;
+  obj->calcNormal(normal, impact);
+  return normal;
+}

@@ -3,10 +3,10 @@
 #include <iostream>
 #include <stdexcept>
 
-void SceneObj::applyTransformations(Camera& camera, Vector& rayVec) const {
-    camera.pos.x -= pos.x;
-    camera.pos.y -= pos.y;
-    camera.pos.z -= pos.z;
+void SceneObj::applyTransformations(Position& vecPos, Vector& rayVec) const {
+    vecPos.x -= pos.x;
+    vecPos.y -= pos.y;
+    vecPos.z -= pos.z;
     // apply rotation next
 }
 

@@ -16,19 +16,20 @@ double LightModel::getDistanceAndNormal(Vector &normal, Camera camera,
   const Position &objPos = obj->getPosition();
   Position distCoef;
   double distance;
+  Position camPos = camera.pos;
 
-  obj->applyTransformations(camera, rayVec);
-  impact.x = camera.pos.x + k * rayVec.x;
-  impact.y = camera.pos.y + k * rayVec.y;
-  impact.z = camera.pos.z + k * rayVec.z;
+  obj->applyTransformations(camPos, rayVec);
+  impact.x = camPos.x + k * rayVec.x;
+  impact.y = camPos.y + k * rayVec.y;
+  impact.z = camPos.z + k * rayVec.z;
   obj->calcNormal(normal, impact);
   //  obj->applyInverseTransformation(camera, rayVec);
   impact.x += objPos.x;
   impact.y += objPos.y;
   impact.z += objPos.z;
-  distCoef.x = camera.pos.x - impact.x;
-  distCoef.y = camera.pos.y - impact.y;
-  distCoef.z = camera.pos.z - impact.z;
+  distCoef.x = camPos.x - impact.x;
+  distCoef.y = camPos.y - impact.y;
+  distCoef.z = camPos.z - impact.z;
   distance = std::sqrt(distCoef.x * distCoef.x + distCoef.y * distCoef.y +
                        distCoef.z * distCoef.z);
   return distance;

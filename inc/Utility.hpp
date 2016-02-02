@@ -12,23 +12,23 @@ struct Vector {
 
   Vector(double x = 0, double y = 0, double z = 0) : x(x), y(y), z(z) {}
 
-  double getVectorNorme() { return std::sqrt(x * x + y * y + z * z); }
+  double getVectorNorme() const { return std::sqrt(x * x + y * y + z * z); }
 
   void makeUnit() {
     double norme = getVectorNorme();
 
     if (norme == 0)
       norme = 0.0000001;
-    x /= norme;
-    y /= norme;
-    z /= norme;
+    this->x /= norme;
+    this->y /= norme;
+    this->z /= norme;
   }
 
-  double scale(const Vector &vec) {
+  double scale(const Vector &vec) const {
     return (x * vec.x + y * vec.y + z * vec.z);
   }
 
-  double dot(const Vector &vec) {
+  double dot(const Vector &vec) const {
     double norme = getVectorNorme();
 
     if (norme == 0)

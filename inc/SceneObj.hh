@@ -26,7 +26,7 @@ public:
     const LightParameters& getLightParameters() const;
     unsigned int getColor() const;
 
-    void applyTransformations(Camera& camera, Vector& rayVec) const;
+    void applyTransformations(Position& vecPos, Vector& rayVec) const;
 
 protected:
   Position pos;

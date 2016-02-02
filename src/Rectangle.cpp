@@ -11,10 +11,11 @@ Rectangle::Rectangle() {
 }
 
 double Rectangle::intersect(Vector rayVec, Camera camera) const {
-  this->applyTransformations(camera, rayVec);
+  Position vecPos = camera.pos;
+  this->applyTransformations(vecPos, rayVec);
   Vector normal(-this->width, 0, this->height);
   Vector objPos(pos.x, pos.y, pos.z);
-  Vector camPos(camera.pos.x, camera.pos.y, camera.pos.z);
+  Vector camPos(vecPos.x, vecPos.y, vecPos.z);
   Vector B(this->width, 0, this->height);
   double r, d, n;
 
@@ -25,11 +26,11 @@ double Rectangle::intersect(Vector rayVec, Camera camera) const {
   r = n / d;
   if (r < 0)
     return -1;
-return r;
+  return r;
   Position inter;
-  inter.x = camera.pos.x + r * rayVec.x;
-  inter.y = camera.pos.y + r * rayVec.y;
-  inter.z = camera.pos.z + r * rayVec.z;
+  inter.x = vecPos.x + r * rayVec.x;
+  inter.y = vecPos.y + r * rayVec.y;
+  inter.z = vecPos.z + r * rayVec.z;
   Vector interVec(pos.x - inter.x, pos.y - inter.y, pos.z - inter.z);
   interVec.makeUnit();
   B.makeUnit();
