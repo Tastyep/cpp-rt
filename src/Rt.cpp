@@ -23,8 +23,8 @@ Rt::getClosestObj(const auto &rayVec, const Camera &camera) {
   std::shared_ptr<SceneObj> savedObj = nullptr;
 
   for (const auto &object : this->objects) {
-    k = object->intersect(rayVec, this->camera);
-    if (k > 0 && (k < kmin || kmin == -1)) {
+    k = object->intersect(rayVec, camera);
+    if (k > 0.000001 && (k < kmin || kmin == -1)) {
       kmin = k;
       savedObj = object;
     }
@@ -33,15 +33,17 @@ Rt::getClosestObj(const auto &rayVec, const Camera &camera) {
 }
 int toto = 0;
 Color Rt::getReflectedColor(std::shared_ptr<SceneObj> obj, Camera camera,
-                            Vector rayVec, double k, unsigned int pass) {
+                            Vector rayVec, const InterData& interData, double k,
+                            unsigned int pass) {
+  Color cuColor(obj->getColor());
+
   if (pass > 10)
-    return obj->getColor();
+    return cuColor;
   if (obj->getReflectionIndex() == 0) {
-    // apply effects
-    return obj->getColor();
+    cuColor = lightModel.applyLights(obj, cuColor, interData.k, interData.pos, interData.ray);
+    return cuColor;
   }
 
-  Color cuColor(obj->getColor());
   Color newColor(0);
   Math math;
   Vector view;
@@ -54,36 +56,32 @@ Color Rt::getReflectedColor(std::shared_ptr<SceneObj> obj, Camera camera,
   view = Vector(impact.x, impact.y, impact.z) -
          Vector(camera.pos.x, camera.pos.y, camera.pos.z);
   reflected = math.calcReflectedVector(view, normal);
-  newColor.r = reflected.x * 127.0 + 127.0;
-  newColor.g = reflected.y * 127.0 + 127.0;
-  newColor.b = reflected.z * 127.0 + 127.0;
-  return newColor;
-  // std::cout << reflected << "\n";
+
   reflectedObj = this->getClosestObj(reflected, Camera(impact));
-  if (reflectedObj.second <= 0) {
+  if (reflectedObj.second <= 0.000000) {
     cuColor.mix(0x000000, obj->getReflectionIndex());
     return cuColor;
   }
-  newColor = this->getReflectedColor(reflectedObj.first, Camera(impact),
-                                     reflected, reflectedObj.second, pass + 1);
-  // apply effects
+  newColor =
+      this->getReflectedColor(reflectedObj.first, Camera(impact), reflected,
+                              interData, reflectedObj.second, pass + 1);
   cuColor.mix(newColor, obj->getReflectionIndex());
-  return newColor;
+  return cuColor;
 }
 
 unsigned int Rt::computePixelColor(const Vector &rayVec) {
   Color color(0);
-  std::shared_ptr<SceneObj> obj;
   auto pair = this->getClosestObj(rayVec, this->camera);
+  InterData interData(rayVec, this->camera.pos, pair.first, pair.second);
 
-  if (pair.first == nullptr)
+  if (interData.obj == nullptr)
     return color.toInteger();
-  obj = pair.first;
-  if (obj->getReflectionIndex() > 0)
-    color = getReflectedColor(obj, this->camera, rayVec, pair.second, 1);
+  if (interData.obj->getReflectionIndex() > 0)
+    color =
+        getReflectedColor(interData.obj, this->camera, rayVec, interData, pair.second, 1);
   else
-    color = obj->getColor();
-  color = lightModel.applyLights(pair.first, color, pair.second, this->camera,
+    color = interData.obj->getColor();
+  color = lightModel.applyLights(interData.obj, color, interData.k, this->camera,
                                  rayVec);
   return color.toInteger();
 }

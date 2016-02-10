@@ -9,6 +9,16 @@
 #include <utility>
 #include <SFML/System.hpp>
 
+struct InterData {
+  const Vector& ray;
+  Position pos;
+  std::shared_ptr<SceneObj> obj;
+  double k;
+  InterData(const Vector &ray, const Position &pos,
+            std::shared_ptr<SceneObj> obj, double k)
+      : ray(ray), pos(pos), obj(obj), k(k) {}
+};
+
 class Rt {
 public:
   Rt(const Camera &camera,
@@ -29,7 +39,8 @@ private:
   std::pair<std::shared_ptr<SceneObj>, double>
   getClosestObj(const auto &rayVec, const Camera &camera);
   Color getReflectedColor(std::shared_ptr<SceneObj> obj, Camera camera,
-                          Vector rayVec, double k, unsigned int pass);
+                          Vector rayVec, const InterData& interData, double k,
+                          unsigned int pass);
 
 private:
   static constexpr unsigned int Dist = 1000;
