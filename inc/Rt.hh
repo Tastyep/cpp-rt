@@ -21,11 +21,15 @@ public:
   Rt &operator=(const Rt &other) = default;
   Rt &operator=(Rt &&other) = default;
 
-  unsigned int computePixelColor(const Vector& rayVec);
-  void computeRayVec(Vector& rayVec, int x, int y, sf::Vector2i screenSize) const;
+  unsigned int computePixelColor(const Vector &rayVec);
+  void computeRayVec(Vector &rayVec, int x, int y,
+                     sf::Vector2i screenSize) const;
 
 private:
-  std::pair<std::shared_ptr<SceneObj>, double> getClosestObj(const auto& rayVec);
+  std::pair<std::shared_ptr<SceneObj>, double>
+  getClosestObj(const auto &rayVec, const Camera &camera);
+  Color getReflectedColor(std::shared_ptr<SceneObj> obj, Camera camera,
+                          Vector rayVec, double k, unsigned int pass);
 
 private:
   static constexpr unsigned int Dist = 1000;

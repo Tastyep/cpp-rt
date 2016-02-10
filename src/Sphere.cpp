@@ -6,7 +6,7 @@
 Sphere::Sphere() {
   IntegerValues = {{"radius", radius}, {"color", color}};
   FloatingValues = {{"x", pos.x},     {"y", pos.y},     {"z", pos.z},
-                    {"Ia", light.Ia}, {"Id", light.Id}, {"Is", light.Is}};
+                    {"Ia", light.Ia}, {"Id", light.Id}, {"Is", light.Is}, {"Reflection", reflection}};
 }
 
 double Sphere::intersect(Vector rayVec, Camera camera) const {
@@ -27,7 +27,8 @@ double Sphere::intersect(Vector rayVec, Camera camera) const {
 }
 
 void Sphere::calcNormal(Vector &normVec, const Position &impact) const {
-  normVec.x = impact.x;
-  normVec.y = impact.y;
-  normVec.z = impact.z;
+  normVec.x = impact.x - pos.x;
+  normVec.y = impact.y - pos.y;
+  normVec.z = impact.z - pos.z;
+  normVec.makeUnit();
 }

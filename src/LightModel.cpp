@@ -18,15 +18,15 @@ double LightModel::getDistanceAndNormal(Vector &normal, Camera camera,
   double distance;
   Position camPos = camera.pos;
 
-  obj->applyTransformations(camPos, rayVec);
+  //obj->applyTransformations(camPos, rayVec);
   impact.x = camPos.x + k * rayVec.x;
   impact.y = camPos.y + k * rayVec.y;
   impact.z = camPos.z + k * rayVec.z;
   obj->calcNormal(normal, impact);
   //  obj->applyInverseTransformation(camera, rayVec);
-  impact.x += objPos.x;
-  impact.y += objPos.y;
-  impact.z += objPos.z;
+  // impact.x += objPos.x;
+  // impact.y += objPos.y;
+  // impact.z += objPos.z;
   distCoef.x = camPos.x - impact.x;
   distCoef.y = camPos.y - impact.y;
   distCoef.z = camPos.z - impact.z;
@@ -68,24 +68,23 @@ bool LightModel::sumPhongValues(std::shared_ptr<Light> light,
     return false;
   lightVec.makeUnit();
   cosTheta = std::max(lightVec.dot(normVec), 0.0);
-  reflected = 2.0 * cosTheta * normVec - lightVec;
-  cosOmega = std::max(reflected.dot(-rayVec), 0.0);
+  reflected = lightVec - 2.0 * cosTheta * normVec;
+  cosOmega = std::max(reflected.dot(rayVec), 0.0);
   currentPhong.x = objLight.Ia * 0;
   currentPhong.y =
       1.0 * objLight.Id * cosTheta; // change 1.0 by the intensity of the light
-  currentPhong.z = 1.0 * objLight.Is * std::pow(cosOmega, 50);
+  currentPhong.z = 1.0 * objLight.Is * std::pow(cosOmega, 80);
   phongComp.x = std::max(phongComp.x, currentPhong.x);
   phongComp.y = std::max(phongComp.y, currentPhong.y);
   phongComp.z = std::max(phongComp.z, currentPhong.z);
   return true;
 }
 
-unsigned int LightModel::applyLights(std::shared_ptr<SceneObj> obj, double k,
-                                     const Camera &camera, Vector rayVec) {
+Color LightModel::applyLights(std::shared_ptr<SceneObj> obj, Color color,
+                              double k, const Camera &camera, Vector rayVec) {
   Vector normVec;
   Vector phongComp = {0, 0, 0};
   Position impact;
-  Color color = obj->getColor();
   Color specularColor = 0xFFFFFF;
   Color sumLightColor(0);
   unsigned int nbAppliedColor = 0;
@@ -97,7 +96,6 @@ unsigned int LightModel::applyLights(std::shared_ptr<SceneObj> obj, double k,
 
   this->getDistanceAndNormal(normVec, camera, obj, rayVec, k);
   rayVec.makeUnit();
-  normVec.makeUnit();
   for (auto light : this->lights) {
     if (this->sumPhongValues(light, impact, normVec, rayVec, phongComp,
                              obj->getLightParameters())) {
@@ -111,5 +109,5 @@ unsigned int LightModel::applyLights(std::shared_ptr<SceneObj> obj, double k,
   specularColor *= phongComp.z;
   color += specularColor;
   color.limit();
-  return color.toInteger();
+  return color;
 }

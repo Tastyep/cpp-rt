@@ -27,11 +27,13 @@ public:
     unsigned int getColor() const;
 
     void applyTransformations(Position& vecPos, Vector& rayVec) const;
+    float getReflectionIndex() const;
 
 protected:
   Position pos;
   LightParameters light;
   unsigned int color = 0;
+  double reflection = 0;
 };
 
 #endif /* end of include guard: RT_SCENE_OBJ */

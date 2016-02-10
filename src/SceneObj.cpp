@@ -22,3 +22,6 @@ const LightParameters& SceneObj::getLightParameters() const {
 unsigned int SceneObj::getColor() const {
     return color;
 }
+float SceneObj::getReflectionIndex() const {
+    return reflection;
+}

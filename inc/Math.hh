@@ -24,7 +24,7 @@ public:
                      std::array<double, 2> solutions) const;
   Vector calcReflectedVector(const Vector &ray, const Vector &normal) const;
   Vector calcNormalVector(Position camera, std::shared_ptr<SceneObj> obj,
-                          Vector rayVec, double k) const;
+                          Vector rayVec, double k, Position& impact) const;
 
 private:
   double getPositiveMin(const auto &array) const;

@@ -1,6 +1,7 @@
 #include "Math.hh"
 
 #include <cmath>
+#include <iostream>
 
 double Math::getPositiveMin(const auto &array) const {
   bool set = false;
@@ -36,18 +37,18 @@ double Math::solveSecond(const Vector &coefs,
 Vector Math::calcReflectedVector(const Vector &ray,
                                  const Vector &normal) const {
   double cosAngle;
+  Vector copyRay = ray;
 
-  cosAngle = ray.dot(normal);
-  return (2.0 * cosAngle * normal - ray);
+  copyRay.makeUnit();
+  cosAngle = copyRay.dot(normal);
+  return (copyRay - 2.0 * cosAngle * normal);
 }
 
 Vector Math::calcNormalVector(Position pos, std::shared_ptr<SceneObj> obj,
-                              Vector rayVec, double k) const {
-  Position impact;
+                              Vector rayVec, double k, Position& impact) const {
   const Position &objPos = obj->getPosition();
   Vector normal;
 
-  obj->applyTransformations(pos, rayVec);
   impact.x = pos.x + k * rayVec.x;
   impact.y = pos.y + k * rayVec.y;
   impact.z = pos.z + k * rayVec.z;

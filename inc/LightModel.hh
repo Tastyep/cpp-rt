@@ -21,8 +21,8 @@ public:
   LightModel &operator=(const LightModel &other) = default;
   LightModel &operator=(LightModel &&other) = default;
 
-  unsigned int applyLights(std::shared_ptr<SceneObj> obj, double k,
-                           const Camera &camera, Vector rayVec);
+  Color applyLights(std::shared_ptr<SceneObj> obj, Color color, double k,
+                    const Camera &camera, Vector rayVec);
 
 private:
   double getDistanceAndNormal(Vector &normal, Camera camera,

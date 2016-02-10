@@ -7,7 +7,7 @@ Rectangle::Rectangle() {
   IntegerValues = {{"color", color}};
   FloatingValues = {{"x", pos.x},       {"y", pos.y},     {"z", pos.z},
                     {"Ia", light.Ia},   {"Id", light.Id}, {"Is", light.Is},
-                    {"height", height}, {"width", width}};
+                    {"height", height}, {"width", width}, {"Reflection", reflection}};
 }
 
 double Rectangle::intersect(Vector rayVec, Camera camera) const {
@@ -19,8 +19,8 @@ double Rectangle::intersect(Vector rayVec, Camera camera) const {
   Vector B(this->width, 0, this->height);
   double r, d, n;
 
-  d = normal.scale(rayVec);
-  n = normal.scale(objPos) - normal.scale(camPos);
+  d = normal.dot(rayVec);
+  n = normal.dot(objPos) - normal.dot(camPos);
   if (d == 0)
     return -1;
   r = n / d;
@@ -34,7 +34,7 @@ double Rectangle::intersect(Vector rayVec, Camera camera) const {
   Vector interVec(pos.x - inter.x, pos.y - inter.y, pos.z - inter.z);
   interVec.makeUnit();
   B.makeUnit();
-  double p = interVec.scale(B);
+  double p = interVec.dot(B);
   // std::cout << p << "\n";
   if (p >= -0.000001 && p <= 0.000001)
     return r;
@@ -45,4 +45,5 @@ void Rectangle::calcNormal(Vector &normVec, const Position &impact) const {
   normVec.x = -this->width;
   normVec.y = 0;
   normVec.z = this->height;
+  normVec.makeUnit();
 }

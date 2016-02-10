@@ -2,6 +2,7 @@
 #define RT_UTILITY_HPP
 
 #include <cmath>
+#include <ostream>
 
 struct Position;
 
@@ -24,16 +25,8 @@ struct Vector {
     this->z /= norme;
   }
 
-  double scale(const Vector &vec) const {
-    return (x * vec.x + y * vec.y + z * vec.z);
-  }
-
   double dot(const Vector &vec) const {
-    double norme = getVectorNorme();
-
-    if (norme == 0)
-      norme = 0.0000001;
-    return scale(vec) / norme;
+    return (x * vec.x + y * vec.y + z * vec.z);
   }
 
   Vector operator+(const Vector &vec) const {
@@ -56,6 +49,11 @@ struct Vector {
     return {x * value, y * value, z * value};
   }
 };
+
+inline std::ostream& operator<<(std::ostream& os, const Vector& vec) {
+    os << "[" << vec.x << "," << vec.y << "," << vec.z << "]";
+    return os;
+}
 
 struct Position {
   double x;
