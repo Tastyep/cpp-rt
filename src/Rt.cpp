@@ -1,5 +1,4 @@
 #include "Rt.hh"
-#include "Math.hh"
 
 #include <iostream>
 
@@ -31,41 +30,71 @@ Rt::getClosestObj(const auto &rayVec, const Camera &camera) {
   }
   return {savedObj, kmin};
 }
-int toto = 0;
-Color Rt::getReflectedColor(std::shared_ptr<SceneObj> obj, Camera camera,
-                            Vector rayVec, const InterData& interData, double k,
-                            unsigned int pass) {
-  Color cuColor(obj->getColor());
 
-  if (pass > 10)
-    return cuColor;
-  if (obj->getReflectionIndex() == 0) {
-    cuColor = lightModel.applyLights(obj, cuColor, interData.k, interData.pos, interData.ray);
-    return cuColor;
-  }
-
-  Color newColor(0);
-  Math math;
-  Vector view;
-  Vector normal;
+Color Rt::getReflectedColor(const InterData &origRay, InterData ray, int pass) {
   Vector reflected;
-  Position impact;
   std::pair<std::shared_ptr<SceneObj>, double> reflectedObj;
 
-  normal = math.calcNormalVector(camera.pos, obj, rayVec, k, impact);
-  view = Vector(impact.x, impact.y, impact.z) -
-         Vector(camera.pos.x, camera.pos.y, camera.pos.z);
-  reflected = math.calcReflectedVector(view, normal);
+  // ray.ray = ray.impact - ray.vecPos;
+  reflected = this->math.calcReflectedVector(ray.ray, ray.normal);
+  reflectedObj = this->getClosestObj(reflected, Camera(ray.impact));
+  if (reflectedObj.second < Rt::zero)
+    return Color(0x000000);
+  ray.obj = reflectedObj.first;
+  ray.k = reflectedObj.second;
+  ray.ray = reflected;
+  ray.vecPos = ray.impact;
+  return this->ComputeObjectColor(origRay, ray, pass);
+}
 
-  reflectedObj = this->getClosestObj(reflected, Camera(impact));
-  if (reflectedObj.second <= 0.000000) {
-    cuColor.mix(0x000000, obj->getReflectionIndex());
-    return cuColor;
+Color Rt::getRefractedColor(const InterData &origRay, InterData ray, int pass) {
+  std::pair<std::shared_ptr<SceneObj>, double> refractedObj;
+
+  // ray.ray = ray.impact - ray.vecPos;
+
+  refractedObj = this->getClosestObj(ray.ray, Camera(ray.impact));
+  if (refractedObj.second < Rt::zero)
+    return Color(0x000000);
+  ray.obj = refractedObj.first;
+  ray.k = refractedObj.second;
+  ray.vecPos = ray.impact;
+  return this->ComputeObjectColor(origRay, ray, pass);
+}
+
+Color Rt::ComputeObjectColor(const InterData &origRay, InterData ray,
+                             int pass) {
+  Color reflectedColor(0);
+  Color refractedColor(0);
+  Color cuColor(ray.obj->getColor());
+  float reflecIdx = ray.obj->getReflectionIndex();
+  float refracIdx = ray.obj->getTransparencyIndex();
+
+  ++pass;
+  if (pass > 1) { // Means there is at least one recursion and we are not
+                  // computing it again
+    ray.calcImpact();
+    ray.normal = this->math.calcNormalVector(ray.vecPos, ray.obj, ray.ray,
+                                             ray.k, ray.impact);
   }
-  newColor =
-      this->getReflectedColor(reflectedObj.first, Camera(impact), reflected,
-                              interData, reflectedObj.second, pass + 1);
-  cuColor.mix(newColor, obj->getReflectionIndex());
+  if (pass > 10) {
+    return ray.obj->getColor(); // apply light
+  }
+  if (reflecIdx > Rt::zero) {
+    reflectedColor = getReflectedColor(origRay, ray, pass);
+  }
+  if (refracIdx > Rt::zero) {
+    refractedColor = getRefractedColor(origRay, ray, pass);
+  }
+  // cuColor = this->lightModel.applyLights(ray.obj, cuColor, ray.k,
+  //                                        Camera(ray.vecPos), ray.ray);
+  if (reflecIdx > Rt::zero || refracIdx > Rt::zero) {
+    if (reflecIdx > Rt::zero && refracIdx > Rt::zero) {
+      // Handle later
+    } else if (reflecIdx > Rt::zero) {
+      cuColor.mix(reflectedColor, reflecIdx);
+    } else
+      cuColor.mix(refractedColor, refracIdx);
+  }
   return cuColor;
 }
 
@@ -74,14 +103,13 @@ unsigned int Rt::computePixelColor(const Vector &rayVec) {
   auto pair = this->getClosestObj(rayVec, this->camera);
   InterData interData(rayVec, this->camera.pos, pair.first, pair.second);
 
-  if (interData.obj == nullptr)
+  if (interData.obj == nullptr) // No object found
     return color.toInteger();
-  if (interData.obj->getReflectionIndex() > 0)
-    color =
-        getReflectedColor(interData.obj, this->camera, rayVec, interData, pair.second, 1);
-  else
-    color = interData.obj->getColor();
-  color = lightModel.applyLights(interData.obj, color, interData.k, this->camera,
-                                 rayVec);
+
+  interData.calcImpact();
+  interData.normal =
+      this->math.calcNormalVector(interData.vecPos, interData.obj,
+                                  interData.ray, interData.k, interData.impact);
+  color = this->ComputeObjectColor(interData, interData, 0);
   return color.toInteger();
 }

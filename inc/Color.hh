@@ -17,6 +17,10 @@ public:
         return Color(this->r / number, this->g / number, this->b / number);
     }
     
+    bool operator!() const {
+        return r || g || b;
+    }
+    
     void operator+=(const Color& color) {
         this->r += color.r;
         this->g += color.g;
@@ -57,6 +61,11 @@ public:
     unsigned int g;
     unsigned int b;
 };
+
+inline std::ostream& operator<<(std::ostream& os, const Color& c) {
+    os << "[" << c.r << "," << c.g << "," << c.b << "]";
+    return os;
+}
 
 #endif /* end of include guard: RT_COLOR_HH */
         

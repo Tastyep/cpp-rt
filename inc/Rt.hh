@@ -4,22 +4,33 @@
 #include "Camera.hh"
 #include "SceneObj.hh"
 #include "LightModel.hh"
+#include "Math.hh"
 
 #include <memory>
 #include <utility>
 #include <SFML/System.hpp>
 
 struct InterData {
-  const Vector& ray;
-  Position pos;
-  std::shared_ptr<SceneObj> obj;
+  Vector ray;
+  Vector normal;
+  Position vecPos;
+  Position impact;
   double k;
+  std::shared_ptr<SceneObj> obj;
   InterData(const Vector &ray, const Position &pos,
             std::shared_ptr<SceneObj> obj, double k)
-      : ray(ray), pos(pos), obj(obj), k(k) {}
+      : ray(ray), vecPos(pos), obj(obj), k(k) {}
+
+  void calcImpact() {
+      impact.x = vecPos.x + k * ray.x;
+      impact.y = vecPos.y + k * ray.y;
+      impact.z = vecPos.z + k * ray.z;
+  }
 };
 
 class Rt {
+public:
+    static double constexpr zero = 0.00000001;
 public:
   Rt(const Camera &camera,
      const std::vector<std::shared_ptr<SceneObj>> &objects,
@@ -38,9 +49,10 @@ public:
 private:
   std::pair<std::shared_ptr<SceneObj>, double>
   getClosestObj(const auto &rayVec, const Camera &camera);
-  Color getReflectedColor(std::shared_ptr<SceneObj> obj, Camera camera,
-                          Vector rayVec, const InterData& interData, double k,
-                          unsigned int pass);
+  Color ComputeObjectColor(const InterData &origRay, InterData ray,
+                               int pass);
+  Color getReflectedColor(const InterData &origRay, InterData ray, int pass);
+  Color getRefractedColor(const InterData &origRay, InterData ray, int pass);
 
 private:
   static constexpr unsigned int Dist = 1000;
@@ -49,6 +61,7 @@ private:
   const Camera &camera;
   const std::vector<std::shared_ptr<SceneObj>> &objects;
   LightModel lightModel;
+  Math math;
 };
 
 #endif /* end of include guard: RT_RT_HH */

@@ -12,7 +12,7 @@ class Parsable
 public:
     Parsable() = default;
 
-    ~Parsable() = default;
+    virtual ~Parsable() = default;
     Parsable(const Parsable& other) = default;
     Parsable(Parsable&& other) = default;
     Parsable& operator=(const Parsable& other) = default;

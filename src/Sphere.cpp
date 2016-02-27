@@ -5,8 +5,14 @@
 
 Sphere::Sphere() {
   IntegerValues = {{"radius", radius}, {"color", color}};
-  FloatingValues = {{"x", pos.x},     {"y", pos.y},     {"z", pos.z},
-                    {"Ia", light.Ia}, {"Id", light.Id}, {"Is", light.Is}, {"Reflection", reflection}};
+  FloatingValues = {{"x", pos.x},
+                    {"y", pos.y},
+                    {"z", pos.z},
+                    {"Ia", light.Ia},
+                    {"Id", light.Id},
+                    {"Is", light.Is},
+                    {"Reflection", reflection},
+                    {"Transparency", alpha}};
 }
 
 double Sphere::intersect(Vector rayVec, Camera camera) const {
