@@ -8,7 +8,7 @@ double Math::getPositiveMin(const auto &array) const {
   double smallest;
 
   for (const auto &elem : array) {
-    if (elem > 0 && (set == false || elem < smallest)) {
+    if (elem > Math::zero && (set == false || elem < smallest)) {
       set = true;
       smallest = elem;
     }
@@ -21,10 +21,10 @@ double Math::solveSecond(const Vector &coefs,
   double delta;
   double sqrtDelta;
 
-  if (coefs.x <= Math::eps && coefs.x >= Math::eps)
-    return -1;
   delta = coefs.y * coefs.y - (4.0 * coefs.x * coefs.z);
   if (delta < 0)
+    return -1;
+  if (coefs.x == 0)
     return -1;
   if (delta == 0)
     return (-coefs.y / (2.0 * coefs.x));
@@ -45,7 +45,7 @@ Vector Math::calcReflectedVector(const Vector &ray,
 }
 
 Vector Math::calcNormalVector(Position pos, std::shared_ptr<SceneObj> obj,
-                              Vector rayVec, double k, Position& impact) const {
+                              Vector rayVec, double k, Position &impact) const {
   const Position &objPos = obj->getPosition();
   Vector normal;
 

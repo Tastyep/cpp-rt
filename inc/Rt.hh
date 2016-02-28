@@ -30,8 +30,6 @@ struct InterData {
 
 class Rt {
 public:
-    static double constexpr zero = 0.00000001;
-public:
   Rt(const Camera &camera,
      const std::vector<std::shared_ptr<SceneObj>> &objects,
      const std::vector<std::shared_ptr<Light>> &lights);

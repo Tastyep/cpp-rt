@@ -23,7 +23,7 @@ Rt::getClosestObj(const auto &rayVec, const Camera &camera) {
 
   for (const auto &object : this->objects) {
     k = object->intersect(rayVec, camera);
-    if (k > 0.000001 && (k < kmin || kmin == -1)) {
+    if (k > Math::zero && (k < kmin || kmin == -1)) {
       kmin = k;
       savedObj = object;
     }
@@ -38,7 +38,7 @@ Color Rt::getReflectedColor(const InterData &origRay, InterData ray, int pass) {
   // ray.ray = ray.impact - ray.vecPos;
   reflected = this->math.calcReflectedVector(ray.ray, ray.normal);
   reflectedObj = this->getClosestObj(reflected, Camera(ray.impact));
-  if (reflectedObj.second < Rt::zero)
+  if (reflectedObj.second < Math::zero)
     return Color(0x000000);
   ray.obj = reflectedObj.first;
   ray.k = reflectedObj.second;
@@ -50,10 +50,8 @@ Color Rt::getReflectedColor(const InterData &origRay, InterData ray, int pass) {
 Color Rt::getRefractedColor(const InterData &origRay, InterData ray, int pass) {
   std::pair<std::shared_ptr<SceneObj>, double> refractedObj;
 
-  // ray.ray = ray.impact - ray.vecPos;
-
   refractedObj = this->getClosestObj(ray.ray, Camera(ray.impact));
-  if (refractedObj.second < Rt::zero)
+  if (refractedObj.first == nullptr)
     return Color(0x000000);
   ray.obj = refractedObj.first;
   ray.k = refractedObj.second;
@@ -79,18 +77,19 @@ Color Rt::ComputeObjectColor(const InterData &origRay, InterData ray,
   if (pass > 10) {
     return ray.obj->getColor(); // apply light
   }
-  if (reflecIdx > Rt::zero) {
+  if (reflecIdx > Math::zero) {
     reflectedColor = getReflectedColor(origRay, ray, pass);
   }
-  if (refracIdx > Rt::zero) {
+  if (refracIdx > Math::zero) {
     refractedColor = getRefractedColor(origRay, ray, pass);
   }
-  // cuColor = this->lightModel.applyLights(ray.obj, cuColor, ray.k,
-  //                                        Camera(ray.vecPos), ray.ray);
-  if (reflecIdx > Rt::zero || refracIdx > Rt::zero) {
-    if (reflecIdx > Rt::zero && refracIdx > Rt::zero) {
+  cuColor = this->lightModel.applyLights(ray.obj, cuColor, ray.k,
+                                         Camera(ray.vecPos), ray.ray);
+  if (reflecIdx > Math::zero || refracIdx > Math::zero) {
+    if (reflecIdx > Math::zero && refracIdx > Math::zero) {
       // Handle later
-    } else if (reflecIdx > Rt::zero) {
+      std::cout << "Not handled" << "\n";
+    } else if (reflecIdx > Math::zero) {
       cuColor.mix(reflectedColor, reflecIdx);
     } else
       cuColor.mix(refractedColor, refracIdx);

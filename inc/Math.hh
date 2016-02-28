@@ -9,7 +9,7 @@
 
 class Math {
 public:
-  static double constexpr eps = 0.000001;
+  static double constexpr zero = 0.00000001;
 
 public:
   Math() = default;

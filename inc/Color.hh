@@ -1,6 +1,8 @@
 #ifndef RT_COLOR_HH
 #define RT_COLOR_HH
-        
+
+#include <sstream>
+
 class Color
 {
 public:
