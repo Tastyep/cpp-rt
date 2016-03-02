@@ -2,6 +2,7 @@
 #include "Color.hh"
 #include "Math.hh"
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 
@@ -52,19 +53,30 @@ double LightModel::getLightIntensity(std::shared_ptr<Light> light,
   bool next = true;
   double lightIntensity = light->getIntensity();
   std::pair<std::shared_ptr<SceneObj>, double> objPair;
+  std::vector<std::shared_ptr<SceneObj>> impactedObj;
 
-  int i = 0;
   while (next) {
     objPair = this->checkInter(lightVec, newCam);
-    if (objPair.first && objPair.first != obj) { // CHeck if there is an
-                                                 // intersection and we didn't
-                                                 // intersect our object
-      lightIntensity *=
-          objPair.first->getTransparencyIndex(); // the more Transparent, the
-                                                 // more light goes through
+    if (objPair.first && objPair.first != obj) {
+      // Check if there is an
+      // intersection and that we didn't
+      // intersect our object
+      auto it =
+          std::find(impactedObj.begin(), impactedObj.end(), objPair.first);
+
+      if (it ==
+          impactedObj.end()) { // If never impacted, multiply the intensity
+        lightIntensity *=
+            objPair.first->getTransparencyIndex(); // the more Transparent, the
+                                                   // more light goes through
+      } else { // Else it means we are inside, which means we are leaving the
+               // obj
+        impactedObj.erase(it);
+      }
       if (lightIntensity <= Math::zero)
         next = false;
       else {
+        impactedObj.emplace_back(objPair.first);
         impact.x = newCam.pos.x + objPair.second * lightVec.x;
         impact.y = newCam.pos.y + objPair.second * lightVec.y;
         impact.z = newCam.pos.z + objPair.second * lightVec.z;
