@@ -33,21 +33,25 @@ double LightModel::getDistanceAndNormal(Vector &normal, Camera camera,
 
 std::pair<std::shared_ptr<SceneObj>, double>
 LightModel::checkInter(const Vector &lightVec, const Camera &camera) {
-  double lightK;
+  double k;
+  double kmin = -1;
+  std::shared_ptr<SceneObj> savedObj = nullptr;
 
-  for (auto object : this->objects) {
-    lightK = object->intersect(-lightVec, camera);
-
-    if (lightK > Math::zero && lightK < 0.9999999)
-      return {object, lightK};
+  for (const auto &object : this->objects) {
+    k = object->intersect(lightVec, camera);
+    if (k > Math::zero && k < 0.99999999999 && (k < kmin || kmin == -1)) {
+      kmin = k;
+      savedObj = object;
+    }
   }
-  return {nullptr, -1};
+  return {savedObj, kmin};
 }
 
 double LightModel::getLightIntensity(std::shared_ptr<Light> light,
                                      std::shared_ptr<SceneObj> obj,
-                                     Vector lightVec) {
-  Camera newCam(light->getPosition());
+                                     Vector lightVec,
+                                     const Position &objImpact) {
+  Camera newCam(objImpact);
   const auto &lightPos = light->getPosition();
   Position impact;
   bool next = true;
@@ -55,6 +59,7 @@ double LightModel::getLightIntensity(std::shared_ptr<Light> light,
   std::pair<std::shared_ptr<SceneObj>, double> objPair;
   std::vector<std::shared_ptr<SceneObj>> impactedObj;
 
+  int i = 0;
   while (next) {
     objPair = this->checkInter(lightVec, newCam);
     if (objPair.first && objPair.first != obj) {
@@ -85,9 +90,11 @@ double LightModel::getLightIntensity(std::shared_ptr<Light> light,
         lightVec.x = lightPos.x - impact.x;
         lightVec.y = lightPos.y - impact.y;
         lightVec.z = lightPos.z - impact.z;
+        newCam = impact;
       }
     } else
       next = false;
+    ++i;
   }
   return lightIntensity;
 }
@@ -109,7 +116,7 @@ bool LightModel::sumPhongValues(std::shared_ptr<Light> light,
   lightVec.y = lightPos.y - impact.y;
   lightVec.z = lightPos.z - impact.z;
 
-  lightIntensity = this->getLightIntensity(light, obj, lightVec);
+  lightIntensity = this->getLightIntensity(light, obj, lightVec, impact);
   lightVec.makeUnit();
   cosTheta = std::max(lightVec.dot(normVec), 0.0);
   reflected = lightVec - 2.0 * cosTheta * normVec;

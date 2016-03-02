@@ -34,7 +34,8 @@ private:
                       const Vector &normVec, const Vector &rayVec,
                       Vector &phongComp, std::shared_ptr<SceneObj> obj);
   double getLightIntensity(std::shared_ptr<Light> light,
-                           std::shared_ptr<SceneObj> obj, Vector lightVec);
+                           std::shared_ptr<SceneObj> obj, Vector lightVec,
+                           const Position &objImpact);
 
 private:
   const std::vector<std::shared_ptr<Light>> &lights;
