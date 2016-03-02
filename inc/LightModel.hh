@@ -1,14 +1,14 @@
 #ifndef RT_LIGHTMODEL_HH
 #define RT_LIGHTMODEL_HH
 
-#include "Light.hh"
-#include "SceneObj.hh"
 #include "Camera.hh"
 #include "Color.hh"
+#include "Light.hh"
+#include "SceneObj.hh"
 
-#include <vector>
 #include <array>
 #include <memory>
+#include <vector>
 
 class LightModel {
 public:
@@ -28,7 +28,8 @@ private:
   double getDistanceAndNormal(Vector &normal, Camera camera,
                               std::shared_ptr<SceneObj> obj, Vector rayVec,
                               double k);
-  double checkInter(const Vector &lightVec, const Camera &camera);
+  std::pair<std::shared_ptr<SceneObj>, double>
+  checkInter(const Vector &lightVec, const Camera &camera);
   bool sumPhongValues(std::shared_ptr<Light> light, const Position &impact,
                       const Vector &normVec, const Vector &rayVec,
                       Vector &phongComp, const LightParameters &objLight);

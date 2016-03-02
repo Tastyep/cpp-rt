@@ -11,16 +11,16 @@ struct Position {
   double z;
 
   Position(double x = 0, double y = 0, double z = 0) : x(x), y(y), z(z) {}
-  
-  double distance(const Position& pos) const {
-      double dx = pos.x - x;
-      double dy = pos.y - y;
-      double dz = pos.z - z;
-      return std::sqrt(dx * dx + dy * dy + dz * dz);
+
+  double distance(const Position &pos) const {
+    double dx = pos.x - x;
+    double dy = pos.y - y;
+    double dz = pos.z - z;
+    return std::sqrt(dx * dx + dy * dy + dz * dz);
   }
-  
-  Vector operator-(const Position& p) const {
-      return Vector(x - p.x, y - p.y, z - p.z);
+
+  Vector operator-(const Position &p) const {
+    return Vector(x - p.x, y - p.y, z - p.z);
   }
 };
 

@@ -15,7 +15,7 @@ public:
   Window &operator=(const Window &other) = default;
   Window &operator=(Window &&other) = default;
 
-  void run(const Parser& parser);
+  void run(const Parser &parser);
 
 private:
   sf::RenderWindow _window;

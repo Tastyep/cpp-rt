@@ -3,19 +3,18 @@
 
 #include "Parsable.hh"
 
-class Light : public Parsable
-{
+class Light : public Parsable {
 public:
-    Light();
+  Light();
 
-    ~Light() = default;
-    Light(const Light& other) = default;
-    Light(Light&& other) = default;
-    Light& operator=(const Light& other) = default;
-    Light& operator=(Light&& other) = default;
+  ~Light() = default;
+  Light(const Light &other) = default;
+  Light(Light &&other) = default;
+  Light &operator=(const Light &other) = default;
+  Light &operator=(Light &&other) = default;
 
-    const Position& getPosition() const;
-    unsigned int getColor() const;
+  const Position &getPosition() const;
+  unsigned int getColor() const;
 
 protected:
   Position pos;

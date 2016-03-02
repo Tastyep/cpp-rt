@@ -30,7 +30,7 @@ struct Vector {
   Vector operator+(const Vector &vec) const {
     return {x + vec.x, y + vec.y, z + vec.z};
   }
-  
+
   Vector operator+(const Position &pos) const {
     return {x + pos.x, y + pos.y, z + pos.z};
   }
@@ -38,10 +38,8 @@ struct Vector {
   Vector operator-(const Vector &vec) const {
     return {x - vec.x, y - vec.y, z - vec.z};
   }
-  
-  Vector operator-() const {
-    return {-x, -y, -z};
-  }
+
+  Vector operator-() const { return {-x, -y, -z}; }
 
   Vector operator*(const Vector &vec) const {
     return {x * vec.x, y * vec.y, z * vec.z};
@@ -52,9 +50,9 @@ struct Vector {
   }
 };
 
-inline std::ostream& operator<<(std::ostream& os, const Vector& vec) {
-    os << "[" << vec.x << "," << vec.y << "," << vec.z << "]";
-    return os;
+inline std::ostream &operator<<(std::ostream &os, const Vector &vec) {
+  os << "[" << vec.x << "," << vec.y << "," << vec.z << "]";
+  return os;
 }
 
 inline Vector operator*(double value, const Vector &vec) { return vec * value; }

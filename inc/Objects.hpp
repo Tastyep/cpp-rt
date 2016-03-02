@@ -1,8 +1,8 @@
 #ifndef RT_OBJECTS_HPP
 #define RT_OBJECTS_HPP
 
-#include <sstream>
 #include <array>
+#include <sstream>
 
 #include "Camera.hh"
 

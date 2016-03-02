@@ -14,7 +14,7 @@ public:
   Sphere &operator=(Sphere &&other) = default;
 
   double intersect(Vector rayVec, Camera camera) const;
-  void calcNormal(Vector &normVec, const Position& impact) const;
+  void calcNormal(Vector &normVec, const Position &impact) const;
 
 private:
   unsigned int radius = 0;

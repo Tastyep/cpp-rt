@@ -5,9 +5,10 @@
 
 Rectangle::Rectangle() {
   IntegerValues = {{"color", color}};
-  FloatingValues = {{"x", pos.x},       {"y", pos.y},     {"z", pos.z},
-                    {"Ia", light.Ia},   {"Id", light.Id}, {"Is", light.Is},
-                    {"height", height}, {"width", width}, {"Reflection", reflection}};
+  FloatingValues = {
+      {"x", pos.x},       {"y", pos.y},     {"z", pos.z},
+      {"Ia", light.Ia},   {"Id", light.Id}, {"Is", light.Is},
+      {"height", height}, {"width", width}, {"Reflection", reflection}};
 }
 
 double Rectangle::intersect(Vector rayVec, Camera camera) const {

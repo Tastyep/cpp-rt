@@ -3,22 +3,22 @@
 
 #include "SceneObj.hh"
 
-class Rectangle : public SceneObj
-{
+class Rectangle : public SceneObj {
 public:
-    Rectangle();
+  Rectangle();
 
-    ~Rectangle() = default;
-    Rectangle(const Rectangle& other) = default;
-    Rectangle(Rectangle&& other) = default;
-    Rectangle& operator=(const Rectangle& other) = default;
-    Rectangle& operator=(Rectangle&& other) = default;
+  ~Rectangle() = default;
+  Rectangle(const Rectangle &other) = default;
+  Rectangle(Rectangle &&other) = default;
+  Rectangle &operator=(const Rectangle &other) = default;
+  Rectangle &operator=(Rectangle &&other) = default;
 
-    double intersect(Vector rayVec, Camera camera) const;
-    void calcNormal(Vector &normVec, const Position& impact) const;
+  double intersect(Vector rayVec, Camera camera) const;
+  void calcNormal(Vector &normVec, const Position &impact) const;
+
 private:
-    double height;
-    double width;
+  double height;
+  double width;
 };
 
 #endif /* end of include guard: RT_Rectangle_HH */

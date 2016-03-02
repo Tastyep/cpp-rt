@@ -1,6 +1,6 @@
 #include "LightModel.hh"
-#include "Math.hh"
 #include "Color.hh"
+#include "Math.hh"
 
 #include <cmath>
 #include <iostream>
@@ -18,15 +18,10 @@ double LightModel::getDistanceAndNormal(Vector &normal, Camera camera,
   double distance;
   Position camPos = camera.pos;
 
-  //obj->applyTransformations(camPos, rayVec);
   impact.x = camPos.x + k * rayVec.x;
   impact.y = camPos.y + k * rayVec.y;
   impact.z = camPos.z + k * rayVec.z;
   obj->calcNormal(normal, impact);
-  //  obj->applyInverseTransformation(camera, rayVec);
-  // impact.x += objPos.x;
-  // impact.y += objPos.y;
-  // impact.z += objPos.z;
   distCoef.x = camPos.x - impact.x;
   distCoef.y = camPos.y - impact.y;
   distCoef.z = camPos.z - impact.z;
@@ -35,16 +30,17 @@ double LightModel::getDistanceAndNormal(Vector &normal, Camera camera,
   return distance;
 }
 
-double LightModel::checkInter(const Vector &lightVec, const Camera &camera) {
+std::pair<std::shared_ptr<SceneObj>, double>
+LightModel::checkInter(const Vector &lightVec, const Camera &camera) {
   double lightK;
 
   for (auto object : this->objects) {
     lightK = object->intersect(-lightVec, camera);
 
-    if (lightK >= 0 && lightK < 0.999999)
-      return lightK;
+    if (lightK > Math::zero && lightK < 0.9999999)
+      return {object, lightK};
   }
-  return -1;
+  return {nullptr, -1};
 }
 
 bool LightModel::sumPhongValues(std::shared_ptr<Light> light,
@@ -54,26 +50,30 @@ bool LightModel::sumPhongValues(std::shared_ptr<Light> light,
   const auto &lightPos = light->getPosition();
   Camera newCam(lightPos);
   Vector lightVec;
-  double lightK;
   Vector reflected;
   Vector currentPhong;
   double cosTheta;
   double cosOmega;
+  double ratio = 1.0;
 
   lightVec.x = lightPos.x - impact.x;
   lightVec.y = lightPos.y - impact.y;
   lightVec.z = lightPos.z - impact.z;
-  lightK = this->checkInter(lightVec, newCam);
-  if (lightK >= 0 && lightK < 0.999999)
-    return false;
+  auto objPair = this->checkInter(lightVec, newCam);
+  if (objPair.first) {
+    ratio = objPair.first->getTransparencyIndex(); // the more Transparent, the
+                                                   // more light goes through
+    if (ratio == 0)
+      return false;
+  }
   lightVec.makeUnit();
   cosTheta = std::max(lightVec.dot(normVec), 0.0);
   reflected = lightVec - 2.0 * cosTheta * normVec;
   cosOmega = std::max(reflected.dot(rayVec), 0.0);
-  currentPhong.x = objLight.Ia * 0;
-  currentPhong.y =
-      1.0 * objLight.Id * cosTheta; // change 1.0 by the intensity of the light
-  currentPhong.z = 1.0 * objLight.Is * std::pow(cosOmega, 80);
+  currentPhong.x = objLight.Ia * 0 * ratio;
+  currentPhong.y = 1.0 * objLight.Id * cosTheta *
+                   ratio; // change 1.0 by the intensity of the light
+  currentPhong.z = 1.0 * objLight.Is * std::pow(cosOmega, 80) * ratio;
   phongComp.x = std::max(phongComp.x, currentPhong.x);
   phongComp.y = std::max(phongComp.y, currentPhong.y);
   phongComp.z = std::max(phongComp.z, currentPhong.z);

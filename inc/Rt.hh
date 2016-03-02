@@ -2,13 +2,13 @@
 #define RT_RT_HH
 
 #include "Camera.hh"
-#include "SceneObj.hh"
 #include "LightModel.hh"
 #include "Math.hh"
+#include "SceneObj.hh"
 
+#include <SFML/System.hpp>
 #include <memory>
 #include <utility>
-#include <SFML/System.hpp>
 
 struct InterData {
   Vector ray;
@@ -22,9 +22,9 @@ struct InterData {
       : ray(ray), vecPos(pos), obj(obj), k(k) {}
 
   void calcImpact() {
-      impact.x = vecPos.x + k * ray.x;
-      impact.y = vecPos.y + k * ray.y;
-      impact.z = vecPos.z + k * ray.z;
+    impact.x = vecPos.x + k * ray.x;
+    impact.y = vecPos.y + k * ray.y;
+    impact.z = vecPos.z + k * ray.z;
   }
 };
 
@@ -47,8 +47,7 @@ public:
 private:
   std::pair<std::shared_ptr<SceneObj>, double>
   getClosestObj(const auto &rayVec, const Camera &camera);
-  Color ComputeObjectColor(const InterData &origRay, InterData ray,
-                               int pass);
+  Color ComputeObjectColor(const InterData &origRay, InterData ray, int pass);
   Color getReflectedColor(const InterData &origRay, InterData ray, int pass);
   Color getRefractedColor(const InterData &origRay, InterData ray, int pass);
 

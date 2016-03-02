@@ -4,32 +4,31 @@
 #include "Objects.hpp"
 #include "Parsable.hh"
 
-#include <map>
 #include <array>
+#include <map>
 #include <memory>
 
 struct LightParameters {
-    double Ia;
-    double Id;
-    double Is;
+  double Ia;
+  double Id;
+  double Is;
 };
 
-class SceneObj : public Objects, public Parsable
-{
+class SceneObj : public Objects, public Parsable {
 public:
-    SceneObj() = default;
-    virtual ~SceneObj() = default;
+  SceneObj() = default;
+  virtual ~SceneObj() = default;
 
-    virtual double intersect(Vector rayVec, Camera camera) const = 0;
-    virtual void calcNormal(Vector& normVec, const Position& impact) const = 0;
-    
-    const Position& getPosition() const;
-    const LightParameters& getLightParameters() const;
-    unsigned int getColor() const;
+  virtual double intersect(Vector rayVec, Camera camera) const = 0;
+  virtual void calcNormal(Vector &normVec, const Position &impact) const = 0;
 
-    void applyTransformations(Position& vecPos, Vector& rayVec) const;
-    float getReflectionIndex() const;
-    float getTransparencyIndex() const;
+  const Position &getPosition() const;
+  const LightParameters &getLightParameters() const;
+  unsigned int getColor() const;
+
+  void applyTransformations(Position &vecPos, Vector &rayVec) const;
+  float getReflectionIndex() const;
+  float getTransparencyIndex() const;
 
 protected:
   Position pos;

@@ -1,10 +1,10 @@
 #include "Window.hh"
 #include "Rt.hh"
 
+#include <chrono>
 #include <cstdint>
 #include <iostream>
 #include <thread>
-#include <chrono>
 
 Window::Window(unsigned int width, unsigned int height)
     : _window(sf::VideoMode(width, height), "Noise Renderer") {}

@@ -1,6 +1,6 @@
 #include "Parser.hh"
-#include "Sphere.hh"
 #include "Rectangle.hh"
+#include "Sphere.hh"
 
 #include <iostream>
 

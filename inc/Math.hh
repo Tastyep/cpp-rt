@@ -1,8 +1,8 @@
 #ifndef RT_MATH_HH
 #define RT_MATH_HH
 
-#include "Utility.hpp"
 #include "SceneObj.hh"
+#include "Utility.hpp"
 
 #include <array>
 #include <memory>
@@ -24,7 +24,7 @@ public:
                      std::array<double, 2> solutions) const;
   Vector calcReflectedVector(const Vector &ray, const Vector &normal) const;
   Vector calcNormalVector(Position camera, std::shared_ptr<SceneObj> obj,
-                          Vector rayVec, double k, Position& impact) const;
+                          Vector rayVec, double k, Position &impact) const;
 
 private:
   double getPositiveMin(const auto &array) const;

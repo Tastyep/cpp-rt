@@ -1,22 +1,23 @@
 #ifndef RT_PARSER_HH
 #define RT_PARSER_HH
 
-#include "SceneObj.hh"
 #include "Camera.hh"
 #include "Light.hh"
+#include "SceneObj.hh"
 
-#include <string>
 #include <fstream>
-#include <vector>
-#include <map>
 #include <functional>
+#include <map>
 #include <memory>
+#include <string>
+#include <vector>
 
 struct ParsableWrapper {
-    Parsable& obj;
-    std::function<void ()> callback;
+  Parsable &obj;
+  std::function<void()> callback;
 
-    ParsableWrapper(Parsable& p, const std::function<void ()>& callback) : obj(p), callback(callback) {}
+  ParsableWrapper(Parsable &p, const std::function<void()> &callback)
+      : obj(p), callback(callback) {}
 };
 
 class Parser {
@@ -33,7 +34,7 @@ public:
   bool parse(const std::string &fileName);
   const std::vector<std::shared_ptr<SceneObj>> &getObjects() const;
   const std::vector<std::shared_ptr<Light>> &getLights() const;
-  const Camera& getCamera() const;
+  const Camera &getCamera() const;
 
 private:
   bool readFile(std::ifstream &file);

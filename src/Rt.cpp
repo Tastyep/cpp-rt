@@ -88,7 +88,8 @@ Color Rt::ComputeObjectColor(const InterData &origRay, InterData ray,
   if (reflecIdx > Math::zero || refracIdx > Math::zero) {
     if (reflecIdx > Math::zero && refracIdx > Math::zero) {
       // Handle later
-      std::cout << "Not handled" << "\n";
+      std::cout << "Not handled"
+                << "\n";
     } else if (reflecIdx > Math::zero) {
       cuColor.mix(reflectedColor, reflecIdx);
     } else
