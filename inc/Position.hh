@@ -12,6 +12,13 @@ struct Position {
 
   Position(double x = 0, double y = 0, double z = 0) : x(x), y(y), z(z) {}
 
+  Position &operator=(const Position &pos) {
+    x = pos.x;
+    y = pos.y;
+    z = pos.z;
+    return *this;
+  }
+
   double distance(const Position &pos) const {
     double dx = pos.x - x;
     double dy = pos.y - y;

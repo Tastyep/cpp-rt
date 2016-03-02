@@ -14,6 +14,7 @@ public:
   Camera &operator=(const Camera &other) = default;
   Camera &operator=(Camera &&other) = default;
 
+  Camera &operator=(const Position &pos) { this->pos = pos; }
   Position pos;
 };
 

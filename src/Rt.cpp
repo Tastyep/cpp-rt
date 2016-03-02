@@ -105,7 +105,6 @@ unsigned int Rt::computePixelColor(const Vector &rayVec) {
 
   if (interData.obj == nullptr) // No object found
     return color.toInteger();
-
   interData.calcImpact();
   interData.normal =
       this->math.calcNormalVector(interData.vecPos, interData.obj,

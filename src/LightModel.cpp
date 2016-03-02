@@ -43,37 +43,69 @@ LightModel::checkInter(const Vector &lightVec, const Camera &camera) {
   return {nullptr, -1};
 }
 
+double LightModel::getLightIntensity(std::shared_ptr<Light> light,
+                                     std::shared_ptr<SceneObj> obj,
+                                     Vector lightVec) {
+  Camera newCam(light->getPosition());
+  const auto &lightPos = light->getPosition();
+  Position impact;
+  bool next = true;
+  double lightIntensity = light->getIntensity();
+  std::pair<std::shared_ptr<SceneObj>, double> objPair;
+
+  int i = 0;
+  while (next) {
+    objPair = this->checkInter(lightVec, newCam);
+    if (objPair.first && objPair.first != obj) { // CHeck if there is an
+                                                 // intersection and we didn't
+                                                 // intersect our object
+      lightIntensity *=
+          objPair.first->getTransparencyIndex(); // the more Transparent, the
+                                                 // more light goes through
+      if (lightIntensity <= Math::zero)
+        next = false;
+      else {
+        impact.x = newCam.pos.x + objPair.second * lightVec.x;
+        impact.y = newCam.pos.y + objPair.second * lightVec.y;
+        impact.z = newCam.pos.z + objPair.second * lightVec.z;
+        // Reduce the vector's lenght so we
+        // still have results between [0-1]
+        lightVec.x = lightPos.x - impact.x;
+        lightVec.y = lightPos.y - impact.y;
+        lightVec.z = lightPos.z - impact.z;
+      }
+    } else
+      next = false;
+  }
+  return lightIntensity;
+}
+
 bool LightModel::sumPhongValues(std::shared_ptr<Light> light,
                                 const Position &impact, const Vector &normVec,
                                 const Vector &rayVec, Vector &phongComp,
-                                const LightParameters &objLight) {
+                                std::shared_ptr<SceneObj> obj) {
+  const LightParameters &objLight = obj->getLightParameters();
   const auto &lightPos = light->getPosition();
-  Camera newCam(lightPos);
   Vector lightVec;
   Vector reflected;
   Vector currentPhong;
   double cosTheta;
   double cosOmega;
-  double ratio = 1.0;
+  double lightIntensity;
 
   lightVec.x = lightPos.x - impact.x;
   lightVec.y = lightPos.y - impact.y;
   lightVec.z = lightPos.z - impact.z;
-  auto objPair = this->checkInter(lightVec, newCam);
-  if (objPair.first) {
-    ratio = objPair.first->getTransparencyIndex(); // the more Transparent, the
-                                                   // more light goes through
-    if (ratio == 0)
-      return false;
-  }
+
+  lightIntensity = this->getLightIntensity(light, obj, lightVec);
   lightVec.makeUnit();
   cosTheta = std::max(lightVec.dot(normVec), 0.0);
   reflected = lightVec - 2.0 * cosTheta * normVec;
   cosOmega = std::max(reflected.dot(rayVec), 0.0);
-  currentPhong.x = objLight.Ia * 0 * ratio;
+  currentPhong.x = objLight.Ia * 0 * lightIntensity;
   currentPhong.y = 1.0 * objLight.Id * cosTheta *
-                   ratio; // change 1.0 by the intensity of the light
-  currentPhong.z = 1.0 * objLight.Is * std::pow(cosOmega, 80) * ratio;
+                   lightIntensity; // change 1.0 by the intensity of the light
+  currentPhong.z = 1.0 * objLight.Is * std::pow(cosOmega, 80) * lightIntensity;
   phongComp.x = std::max(phongComp.x, currentPhong.x);
   phongComp.y = std::max(phongComp.y, currentPhong.y);
   phongComp.z = std::max(phongComp.z, currentPhong.z);
@@ -97,8 +129,7 @@ Color LightModel::applyLights(std::shared_ptr<SceneObj> obj, Color color,
   this->getDistanceAndNormal(normVec, camera, obj, rayVec, k);
   rayVec.makeUnit();
   for (auto light : this->lights) {
-    if (this->sumPhongValues(light, impact, normVec, rayVec, phongComp,
-                             obj->getLightParameters())) {
+    if (this->sumPhongValues(light, impact, normVec, rayVec, phongComp, obj)) {
       ++nbAppliedColor;
       sumLightColor += Color(light->getColor());
     }
