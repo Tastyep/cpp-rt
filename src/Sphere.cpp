@@ -12,7 +12,8 @@ Sphere::Sphere() {
                     {"Id", light.Id},
                     {"Is", light.Is},
                     {"Reflection", reflection},
-                    {"Transparency", alpha}};
+                    {"Transparency", alpha},
+                    {"Absorbance", absorbance}};
 }
 
 double Sphere::intersect(Vector rayVec, Camera camera) const {

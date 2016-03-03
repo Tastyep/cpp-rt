@@ -29,6 +29,7 @@ public:
   void applyTransformations(Position &vecPos, Vector &rayVec) const;
   float getReflectionIndex() const;
   float getTransparencyIndex() const;
+  float getAbsorbanceIdx() const;
 
 protected:
   Position pos;
@@ -36,6 +37,7 @@ protected:
   unsigned int color = 0;
   double reflection = 0;
   double alpha = 0;
+  double absorbance = 0;
 };
 
 #endif /* end of include guard: RT_SCENE_OBJ */

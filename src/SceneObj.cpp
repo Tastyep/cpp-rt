@@ -19,3 +19,5 @@ unsigned int SceneObj::getColor() const { return color; }
 float SceneObj::getReflectionIndex() const { return reflection; }
 
 float SceneObj::getTransparencyIndex() const { return alpha; }
+
+float SceneObj::getAbsorbanceIdx() const { return absorbance; }

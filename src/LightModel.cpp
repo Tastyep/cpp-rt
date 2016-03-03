@@ -47,10 +47,36 @@ LightModel::checkInter(const Vector &lightVec, const Camera &camera) {
   return {savedObj, kmin};
 }
 
+void LightModel::computeLightColor(std::shared_ptr<SceneObj> obj,
+                                   Color &color) {
+  double objAbsorbance;
+
+  objAbsorbance = obj->getAbsorbanceIdx();
+  if (objAbsorbance > 0) {
+    double ratio = 1.0 - objAbsorbance;
+    const Color &objColor = obj->getColor();
+    color.r =
+        objAbsorbance * ((static_cast<double>(objColor.r) / 255.0) *
+                         (static_cast<double>(objColor.r) * objAbsorbance +
+                          color.r * ratio)) +
+        ratio * color.r;
+    color.g =
+        objAbsorbance * ((static_cast<double>(objColor.g) / 255.0) *
+                         (static_cast<double>(objColor.g) * objAbsorbance +
+                          color.g * ratio)) +
+        ratio * color.g;
+    color.b =
+        objAbsorbance * ((static_cast<double>(objColor.b) / 255.0) *
+                         (static_cast<double>(objColor.b) * objAbsorbance +
+                          color.b * ratio)) +
+        ratio * color.b;
+  }
+}
+
 double LightModel::getLightIntensity(std::shared_ptr<Light> light,
                                      std::shared_ptr<SceneObj> obj,
-                                     Vector lightVec,
-                                     const Position &objImpact) {
+                                     Vector lightVec, const Position &objImpact,
+                                     Color &color) {
   Camera newCam(objImpact);
   const auto &lightPos = light->getPosition();
   Position impact;
@@ -73,7 +99,8 @@ double LightModel::getLightIntensity(std::shared_ptr<Light> light,
           impactedObj.end()) { // If never impacted, multiply the intensity
         lightIntensity *=
             objPair.first->getTransparencyIndex(); // the more Transparent, the
-                                                   // more light goes through
+        // more light goes through
+        this->computeLightColor(objPair.first, color);
       } else { // Else it means we are inside, which means we are leaving the
                // obj
         impactedObj.erase(it);
@@ -102,7 +129,7 @@ double LightModel::getLightIntensity(std::shared_ptr<Light> light,
 bool LightModel::sumPhongValues(std::shared_ptr<Light> light,
                                 const Position &impact, const Vector &normVec,
                                 const Vector &rayVec, Vector &phongComp,
-                                std::shared_ptr<SceneObj> obj) {
+                                std::shared_ptr<SceneObj> obj, Color &color) {
   const LightParameters &objLight = obj->getLightParameters();
   const auto &lightPos = light->getPosition();
   Vector lightVec;
@@ -116,7 +143,7 @@ bool LightModel::sumPhongValues(std::shared_ptr<Light> light,
   lightVec.y = lightPos.y - impact.y;
   lightVec.z = lightPos.z - impact.z;
 
-  lightIntensity = this->getLightIntensity(light, obj, lightVec, impact);
+  lightIntensity = this->getLightIntensity(light, obj, lightVec, impact, color);
   lightVec.makeUnit();
   cosTheta = std::max(lightVec.dot(normVec), 0.0);
   reflected = lightVec - 2.0 * cosTheta * normVec;
@@ -148,9 +175,12 @@ Color LightModel::applyLights(std::shared_ptr<SceneObj> obj, Color color,
   this->getDistanceAndNormal(normVec, camera, obj, rayVec, k);
   rayVec.makeUnit();
   for (auto light : this->lights) {
-    if (this->sumPhongValues(light, impact, normVec, rayVec, phongComp, obj)) {
+    Color lightColor = light->getColor();
+
+    if (this->sumPhongValues(light, impact, normVec, rayVec, phongComp, obj,
+                             lightColor)) {
       ++nbAppliedColor;
-      sumLightColor += Color(light->getColor());
+      sumLightColor += lightColor;
     }
   }
   if (nbAppliedColor > 0)

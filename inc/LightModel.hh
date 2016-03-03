@@ -32,10 +32,12 @@ private:
   checkInter(const Vector &lightVec, const Camera &camera);
   bool sumPhongValues(std::shared_ptr<Light> light, const Position &impact,
                       const Vector &normVec, const Vector &rayVec,
-                      Vector &phongComp, std::shared_ptr<SceneObj> obj);
+                      Vector &phongComp, std::shared_ptr<SceneObj> obj,
+                      Color &color);
   double getLightIntensity(std::shared_ptr<Light> light,
                            std::shared_ptr<SceneObj> obj, Vector lightVec,
-                           const Position &objImpact);
+                           const Position &objImpact, Color &color);
+  void computeLightColor(std::shared_ptr<SceneObj> obj, Color &color);
 
 private:
   const std::vector<std::shared_ptr<Light>> &lights;
