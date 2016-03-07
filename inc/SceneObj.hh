@@ -1,6 +1,7 @@
 #ifndef RT_SCENE_OBJ
 #define RT_SCENE_OBJ
 
+#include "Noise.hh"
 #include "Objects.hpp"
 #include "Parsable.hh"
 
@@ -34,10 +35,12 @@ public:
 protected:
   Position pos;
   LightParameters light;
+  Noise noise;
   unsigned int color = 0;
   double reflection = 0;
   double alpha = 0;
   double absorbance = 0;
+  double bumping = 0;
 };
 
 #endif /* end of include guard: RT_SCENE_OBJ */

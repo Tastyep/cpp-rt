@@ -13,7 +13,8 @@ Sphere::Sphere() {
                     {"Is", light.Is},
                     {"Reflection", reflection},
                     {"Transparency", alpha},
-                    {"Absorbance", absorbance}};
+                    {"Absorbance", absorbance},
+                    {"Bumping", bumping}};
 }
 
 double Sphere::intersect(Vector rayVec, Camera camera) const {
@@ -37,5 +38,19 @@ void Sphere::calcNormal(Vector &normVec, const Position &impact) const {
   normVec.x = impact.x - pos.x;
   normVec.y = impact.y - pos.y;
   normVec.z = impact.z - pos.z;
+  if (this->bumping > 0) {
+    //   float fbm(float x, float y, int octaves = 2, float scale = 1,
+    //             float lacunarity = 1, float gain = 0.5) const;
+    float coefx = noise.fbm(impact.x, impact.y, impact.z, 1, 0.2);
+    float coefy = noise.fbm(impact.y, impact.z, impact.x, 1, 0.2);
+    float coefz = noise.fbm(impact.z, impact.x, impact.y, 1, 0.2);
+
+    normVec.x =
+        (1.0 - this->bumping) * normVec.x + this->bumping * coefx * normVec.x;
+    normVec.y =
+        (1.0 - this->bumping) * normVec.y + this->bumping * coefy * normVec.y;
+    normVec.z =
+        (1.0 - this->bumping) * normVec.z + this->bumping * coefz * normVec.z;
+  }
   normVec.makeUnit();
 }

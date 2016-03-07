@@ -1,0 +1,2 @@
+/usr/bin/ar cq libSimplexNoise.a  CMakeFiles/SimplexNoise.dir/src/Noise.cpp.o
+/usr/bin/ranlib libSimplexNoise.a
